@@ -58,7 +58,7 @@
           ]
         }
       ],
-      "icon": "assets/icon.ico"
+      
     },
     "linux": {
       "target": [
