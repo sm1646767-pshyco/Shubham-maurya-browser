@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shubham Maurya Browser</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <div class="brand">
+          <span class="brand-icon">SM</span>
+          <span class="brand-name">Shubham Maurya</span>
+        </div>
+        <button class="icon-btn" id="collapseSidebar" title="Collapse (Ctrl+B)">◀</button>
+      </div>
+
+      <button class="new-tab-side" id="newTabBtn" title="New Tab (Ctrl+T)">
+        <span>＋</span> New Tab
+      </button>
+
+      <div class="sidebar-section">
+        <input type="text" class="tab-search" id="tabSearch" placeholder="🔍 Search tabs..." />
+      </div>
+
+      <div class="tabs-list" id="tabsList"></div>
+
+      <div class="sidebar-bottom">
+        <button class="side-btn" id="bookmarksBtn"><span>⭐</span> Bookmarks</button>
+        <button class="side-btn" id="historyBtn"><span>🕐</span> History</button>
+        <button class="side-btn" id="downloadsBtn"><span>⬇️</span> Downloads</button>
+        <button class="side-btn" id="settingsBtn"><span>⚙️</span> Settings</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <button class="icon-btn" id="expandSidebar" title="Show Sidebar" style="display:none;">▶</button>
+        <button class="icon-btn" id="backBtn" title="Back (Alt+←)">◀</button>
+        <button class="icon-btn" id="forwardBtn" title="Forward (Alt+→)">▶</button>
+        <button class="icon-btn" id="reloadBtn" title="Reload (Ctrl+R)">⟳</button>
+        <button class="icon-btn" id="homeBtn" title="Home">⌂</button>
+
+        <div class="url-bar">
+          <span class="lock-icon" id="lockIcon">🔒</span>
+          <input type="text" id="urlInput" placeholder="Search or enter URL (Ctrl+L)" spellcheck="false" />
+          <button class="icon-btn small" id="bookmarkStar" title="Bookmark (Ctrl+D)">☆</button>
+          <button class="go-btn" id="goBtn">Go</button>
+        </div>
+
+        <div class="shield" id="shield" title="Ads blocked — click to reset">
+          🛡️ <span id="blockedCount">0</span>
+        </div>
+
+        <button class="icon-btn" id="zoomOutBtn" title="Zoom Out (Ctrl+-)">−</button>
+        <span class="zoom-label" id="zoomLabel">100%</span>
+        <button class="icon-btn" id="zoomInBtn" title="Zoom In (Ctrl+=)">＋</button>
+        <button class="icon-btn" id="incognitoBtn" title="New Incognito Tab">🕶️</button>
+        <button class="icon-btn" id="readingBtn" title="Reading Mode">📖</button>
+        <button class="icon-btn" id="screenshotBtn" title="Screenshot">📸</button>
+        <button class="icon-btn" id="fullscreenBtn" title="Fullscreen (F11)">⛶</button>
+        <button class="icon-btn" id="cmdBtn" title="Command Palette (Ctrl+K)">⌘</button>
+        <button class="icon-btn" id="menuBtn" title="Menu">☰</button>
+      </div>
+
+      <!-- Bookmarks Bar -->
+      <div class="bookmarks-bar" id="bookmarksBar">
+        <div class="bm-items" id="bmItems"></div>
+        <button class="icon-btn small" id="addBookmarkBtn" title="Bookmark current page (Ctrl+D)">＋</button>
+      </div>
+
+      <!-- Content -->
+      <div class="content" id="content"></div>
+
+      <!-- Start Page -->
+      <div class="start-page" id="startPage">
+        <div class="logo-badge">
+          <span class="logo-text">SM</span>
+        </div>
+        <h1>Shubham Maurya</h1>
+        <p class="subtitle">Browser</p>
+        <p class="tagline">Ad-free · Fast · Private · Crafted with ❤️ by Shubham Maurya</p>
+
+        <div class="search-box">
+          <input type="text" id="startSearch" placeholder="Search or enter URL..." autofocus />
+        </div>
+
+        <div class="shortcuts">
+          <div class="shortcut" data-url="https://www.google.com"><div class="sc-icon">🔍</div><span>Google</span></div>
+          <div class="shortcut" data-url="https://www.youtube.com"><div class="sc-icon">▶️</div><span>YouTube</span></div>
+          <div class="shortcut" data-url="https://github.com"><div class="sc-icon">🐙</div><span>GitHub</span></div>
+          <div class="shortcut" data-url="https://www.wikipedia.org"><div class="sc-icon">📖</div><span>Wikipedia</span></div>
+          <div class="shortcut" data-url="https://www.reddit.com"><div class="sc-icon">👽</div><span>Reddit</span></div>
+          <div class="shortcut" data-url="https://stackoverflow.com"><div class="sc-icon">💻</div><span>StackOverflow</span></div>
+          <div class="shortcut" data-url="https://www.instagram.com"><div class="sc-icon">📷</div><span>Instagram</span></div>
+          <div class="shortcut" data-url="https://twitter.com"><div class="sc-icon">🐦</div><span>Twitter</span></div>
+        </div>
+
+        <div class="footer-credit">
+          <span>v1.0.0</span> · <span>Made by <b>Shubham Maurya</b></span> · <span>© 2026</span>
+        </div>
+      </div>
+
+      <!-- Reading Mode Overlay -->
+      <div class="reader-overlay" id="readerOverlay">
+        <div class="reader-header">
+          <button class="reader-close" id="readerCloseBtn" title="Close">✕</button>
+          <button class="reader-btn" id="readerThemeBtn" title="Toggle theme">🌓</button>
+        </div>
+        <article class="reader-content" id="readerContent"></article>
+      </div>
+
+    </main>
+
+    <!-- SIDE PANEL -->
+    <aside class="panel" id="panel">
+      <div class="panel-header">
+        <h2 id="panelTitle">Bookmarks</h2>
+        <button class="icon-btn" id="panelClose">✕</button>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </aside>
+
+  </div>
+
+  <!-- COMMAND PALETTE -->
+  <div class="cmd-overlay" id="cmdOverlay">
+    <div class="cmd-box">
+      <div class="cmd-input-wrap">
+        <span class="cmd-icon">⌘</span>
+        <input type="text" id="cmdInput" placeholder="Type a command or search..." autocomplete="off" />
+        <span class="cmd-hint">ESC</span>
+      </div>
+      <div class="cmd-results" id="cmdResults"></div>
+    </div>
+  </div>
+
+  <!-- FIND IN PAGE -->
+  <div class="find-overlay" id="findOverlay">
+    <div class="find-box">
+      <input type="text" id="findInput" placeholder="Find in page..." autocomplete="off" />
+      <span class="find-counter" id="findCounter">0/0</span>
+      <button class="find-btn" id="findPrevBtn" title="Previous (Shift+Enter)">▲</button>
+      <button class="find-btn" id="findNextBtn" title="Next (Enter)">▼</button>
+      <button class="find-btn" id="findCloseBtn" title="Close (ESC)">✕</button>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <div class="context-menu" id="contextMenu"></div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

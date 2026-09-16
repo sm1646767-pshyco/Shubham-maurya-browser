@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shubham Maurya Browser — Ad-free, Fast, Private</title>
+  <meta name="description" content="Ad-free universal browser by Shubham Maurya. Block ads on YouTube, Google, and every website." />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1e1e2e 0%, #181825 100%);
+      color: #cdd6f4;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    .hero {
+      max-width: 900px;
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .logo {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, #89b4fa, #cba6f7);
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: 900;
+      color: #11111b;
+      margin: 0 auto 30px;
+      box-shadow: 0 20px 60px rgba(137,180,250,0.4);
+    }
+    h1 {
+      font-size: 56px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      background: linear-gradient(90deg, #89b4fa, #cba6f7, #f38ba8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+    }
+    .subtitle {
+      font-size: 20px;
+      color: #a6adc8;
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 60px;
+    }
+    .btn {
+      padding: 14px 32px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #89b4fa, #cba6f7);
+      color: #11111b;
+      box-shadow: 0 8px 24px rgba(137,180,250,0.4);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(137,180,250,0.6);
+    }
+    .btn-secondary {
+      background: #313244;
+      color: #cdd6f4;
+      border: 1px solid #45475a;
+    }
+    .btn-secondary:hover { background: #45475a; }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin-bottom: 80px;
+    }
+    .feature {
+      background: #313244;
+      padding: 28px 24px;
+      border-radius: 16px;
+      text-align: left;
+      border: 1px solid #45475a;
+      transition: all 0.2s;
+    }
+    .feature:hover {
+      transform: translateY(-4px);
+      border-color: #89b4fa;
+      box-shadow: 0 12px 32px rgba(137,180,250,0.2);
+    }
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+    .feature h3 {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #cdd6f4;
+    }
+    .feature p {
+      font-size: 13px;
+      color: #a6adc8;
+      line-height: 1.6;
+    }
+    .footer {
+      text-align: center;
+      color: #6c7086;
+      font-size: 13px;
+      padding: 40px 20px;
+      border-top: 1px solid #313244;
+      width: 100%;
+      max-width: 900px;
+    }
+    .footer a {
+      color: #89b4fa;
+      text-decoration: none;
+    }
+    .footer a:hover { text-decoration: underline; }
+    @media (max-width: 600px) {
+      h1 { font-size: 36px; }
+      .subtitle { font-size: 16px; }
+      .cta-buttons { flex-direction: column; }
+      .btn { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="logo">SM</div>
+    <h1>Shubham Maurya Browser</h1>
+    <p class="subtitle">
+      Ad-free · Fast · Private<br>
+      YouTube, Google, aur har website pe ads block karo. Bina tracking, bina distraction.
+    </p>
+
+    <div class="cta-buttons">
+      <a href="https://github.com/sm1646767-pshyco/shubham-maurya-browser/releases/latest/download/ShubhamMauryaBrowser-arm64.dmg" class="btn btn-primary">
+        🍎 Download for Mac
+      </a>
+      <a href="https://github.com/sm1646767-pshyco/shubham-maurya-browser/releases" class="btn btn-secondary">
+        📦 All Downloads
+      </a>
+      <a href="https://github.com/sm1646767-pshyco/shubham-maurya-browser" class="btn btn-secondary">
+        ⭐ View on GitHub
+      </a>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">🛡️</div>
+      <h3>Built-in Ad Blocker</h3>
+      <p>200+ ad domains aur tracking pixels block hote hain network level pe.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🎬</div>
+      <h3>YouTube Ad Skip</h3>
+      <p>Video ads automatically skip ho jate hain. Bina rukawat YouTube dekho.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">⌨️</div>
+      <h3>Command Palette</h3>
+      <p>Ctrl+K se saare actions — new tab, bookmark, settings — sab ek jagah.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📑</div>
+      <h3>Vertical Tabs</h3>
+      <p>Arc browser jaisa sidebar. Bahut tabs manage karna aasan.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📖</div>
+      <h3>Reading Mode</h3>
+      <p>Articles ka clean view. Distraction-free reading experience.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📸</div>
+      <h3>Screenshot Tool</h3>
+      <p>Ctrl+Shift+S se page ka screenshot. Auto-save to Pictures folder.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🕶️</div>
+      <h3>Incognito Mode</h3>
+      <p>Private browsing. No history, no cookies, no tracking.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🔒</div>
+      <h3>Privacy First</h3>
+      <p>Zero telemetry. Zero tracking. Aapka data aapke paas.</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    Made with ❤️ by <a href="https://github.com/sm1646767-pshyco">Shubham Maurya</a> · 
+    <a href="https://github.com/sm1646767-pshyco/shubham-maurya-browser">GitHub</a> · 
+    MIT License · © 2026
+  </div>
+</body>
+</html>
