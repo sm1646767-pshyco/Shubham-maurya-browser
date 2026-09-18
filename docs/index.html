@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#89b4fa">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SM Browser">
+<link rel="apple-touch-icon" href="icon-192.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shubham Maurya Browser — Ad-free, Fast, Private</title>
@@ -94,7 +100,226 @@
         📦 All Downloads
       </a>
       <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser" class="btn btn-secondary">
-        ⭐ View on GitHub
+        ⭐ View on GitHub 
+      <!-- Web Demo Button -->
+<div style="margin-top: 30px; text-align: center;">
+  <button onclick="openWebDemo()" style="
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    background: rgba(137, 180, 250, 0.15);
+    color: #89b4fa;
+    border: 2px solid #89b4fa;
+    cursor: pointer;
+  ">
+    🌐 Try Web Demo (Limited)
+  </button>
+  <p style="margin-top: 10px; font-size: 12px; color: #6c7086;">
+    Demo only — for full ad-blocking, download the app
+  </p>
+</div>
+
+<!-- Web Browser Modal -->
+<div id="webBrowserModal" style="
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 9999;
+  padding: 20px;
+">
+  <div style="
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #1e1e2e;
+    border-radius: 16px;
+    height: calc(100vh - 40px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  ">
+    <!-- Toolbar -->
+    <div style="
+      display: flex;
+      gap: 10px;
+      padding: 12px;
+      background: #181825;
+      border-bottom: 1px solid #313244;
+      align-items: center;
+    ">
+      <button onclick="closeWebDemo()" style="
+        background: #f38ba8;
+        color: white;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+      ">✕</button>
+      
+      <input 
+        type="text" 
+        id="webDemoUrl" 
+        placeholder="Enter URL (e.g. wikipedia.org)"
+        style="
+          flex: 1;
+          padding: 10px 16px;
+          background: #313244;
+          color: #cdd6f4;
+          border: 1px solid #45475a;
+          border-radius: 8px;
+          font-size: 14px;
+          outline: none;
+        "
+        onkeydown="if(event.key==='Enter') loadWebDemo()"
+      />
+      
+      <button onclick="loadWebDemo()" style="
+        padding: 10px 20px;
+        background: #89b4fa;
+        color: #11111b;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+      ">Go</button>
+    </div>
+    
+    <!-- Info banner -->
+    <div style="
+      padding: 10px 16px;
+      background: rgba(249, 226, 175, 0.1);
+      border-bottom: 1px solid rgba(249, 226, 175, 0.3);
+      color: #f9e2af;
+      font-size: 12px;
+    ">
+      ⚠️ Demo mode: ads NOT blocked here. <a href="#download" onclick="closeWebDemo()" style="color: #89b4fa;">Download the app</a> for full ad-blocking.
+    </div>
+    
+    <!-- Web Content -->
+    <div style="flex: 1; position: relative; background: white;">
+      <iframe 
+        id="webDemoFrame" 
+        style="
+          width: 100%;
+          height: 100%;
+          border: none;
+          display: block;
+        "
+        sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals"
+      ></iframe>
+      
+      <!-- Initial placeholder -->
+      <div id="webDemoPlaceholder" style="
+        position: absolute;
+        inset: 0;
+        background: #1e1e2e;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #cdd6f4;
+        text-align: center;
+        padding: 40px;
+      ">
+        <div style="font-size: 64px; margin-bottom: 20px;">🌐</div>
+        <h2 style="font-size: 24px; margin-bottom: 10px;">Web Demo Browser</h2>
+        <p style="color: #a6adc8; margin-bottom: 30px;">URL type karo upar aur "Go" click karo</p>
+        <div style="
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+          justify-content: center;
+          max-width: 600px;
+        ">
+          <button onclick="quickLoad('https://en.wikipedia.org')" style="
+            padding: 8px 16px;
+            background: #313244;
+            color: #cdd6f4;
+            border: 1px solid #45475a;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+          ">📖 Wikipedia</button>
+          
+          <button onclick="quickLoad('https://github.com')" style="
+            padding: 8px 16px;
+            background: #313244;
+            color: #cdd6f4;
+            border: 1px solid #45475a;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+          ">🐙 GitHub</button>
+          
+          <button onclick="quickLoad('https://example.com')" style="
+            padding: 8px 16px;
+            background: #313244;
+            color: #cdd6f4;
+            border: 1px solid #45475a;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+          ">🔗 Example</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openWebDemo() {
+    document.getElementById('webBrowserModal').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => {
+      document.getElementById('webDemoUrl').focus();
+    }, 100);
+  }
+  
+  function closeWebDemo() {
+    document.getElementById('webBrowserModal').style.display = 'none';
+    document.body.style.overflow = '';
+    document.getElementById('webDemoFrame').src = '';
+    document.getElementById('webDemoPlaceholder').style.display = 'flex';
+  }
+  
+  function loadWebDemo() {
+    const url = document.getElementById('webDemoUrl').value.trim();
+    if (!url) return;
+    
+    let finalUrl = url;
+    if (!/^https?:\/\//i.test(url)) {
+      finalUrl = 'https://' + url;
+    }
+    
+    const iframe = document.getElementById('webDemoFrame');
+    iframe.src = finalUrl;
+    document.getElementById('webDemoPlaceholder').style.display = 'none';
+    
+    // Handle iframe load errors
+    iframe.onerror = () => {
+      alert('Ye site iframe me load nahi ho sakti. Kuch sites (Google, YouTube, Facebook) iframe block karti hain.');
+    };
+  }
+  
+  function quickLoad(url) {
+    document.getElementById('webDemoUrl').value = url;
+    loadWebDemo();
+  }
+  
+  // ESC key to close
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const modal = document.getElementById('webBrowserModal');
+      if (modal && modal.style.display === 'block') {
+        closeWebDemo();
+      }
+    }
+  });
+</script>
+
       </a>
     </div>
   </div>
