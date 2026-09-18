@@ -2,48 +2,81 @@
 
 > **Ad-free · Fast · Private · Crafted with ❤️ by Shubham Maurya**
 
-Ek modern, ad-free universal browser jo Electron pe based hai. YouTube, Google, aur har website pe ads block karta hai. Vertical tabs, command palette, reading mode, screenshots — sab built-in!
+Ek modern, ad-free universal browser jo Electron par based hai.
+
+## 📥 Download
+
+| Platform | Download |
+|----------|----------|
+| 🍎 **Mac (Apple Silicon)** | [Download .dmg](https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/download/v1.0.0/ShubhamMauryaBrowser-1.0.0-arm64.dmg) |
+| 🍎 **Mac (Intel)** | [Download .dmg](https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/download/v1.0.0/ShubhamMauryaBrowser-1.0.0.dmg) |
+| 🪟 **Windows** | [Download .exe](https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/download/v1.0.0/ShubhamMauryaBrowser.Setup.1.0.0.exe) |
+
+Ya phir [**Releases page**](https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases) pe jao.
+
+🌐 **Website:** [sm1646767-pshyco.github.io/Shubham-maurya-browser](https://sm1646767-pshyco.github.io/Shubham-maurya-browser/)
 
 ---
 
 ## ✨ Features
 
-- 🛡️ **Ad-free browsing** — Network + DOM level ad blocking
-- 🎬 **YouTube ad auto-skip** — Video ads automatically skip
-- 📑 **Vertical sidebar tabs** — Arc browser style
-- ⌨️ **Command Palette** — `Ctrl+K` se quick actions
-- 🔍 **Find in Page** — `Ctrl+F` se page search
-- 📥 **Downloads Tracker** — Live progress tracking
-- 📸 **Screenshot Tool** — `Ctrl+Shift+S` se page capture
-- 📖 **Reading Mode** — Clean article view
-- 📌 **Pinned Tabs** — Important tabs pin karo
-- 🕶️ **Incognito Mode** — Private browsing
-- ⭐ **Bookmarks & History** — Full support
-- 🌓 **Dark / Light Theme** — Toggle karo
-- 🔒 **Privacy-first** — No tracking, no telemetry
+- 🛡️ **Built-in Ad Blocker** — 200+ domains blocked
+- 🎬 **YouTube Ad Auto-Skip**
+- ⌨️ **Command Palette** (Ctrl+K)
+- 📑 **Vertical Sidebar Tabs**
+- 🔍 **Find in Page** (Ctrl+F)
+- 📖 **Reading Mode**
+- 📸 **Screenshot Tool**
+- 🕶️ **Incognito Mode**
+- 📥 **Downloads Tracker**
+- 📌 **Pinned Tabs**
+- ⭐ **Bookmarks & History**
+- 🌓 **Dark/Light Theme**
+- 🔒 **Zero Telemetry**
 
 ---
 
-## 🚀 Installation
+## ⌨️ Keyboard Shortcuts
 
-### Download Pre-built
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+T` | New Tab |
+| `Ctrl+W` | Close Tab |
+| `Ctrl+L` | Focus URL bar |
+| `Ctrl+K` | Command Palette |
+| `Ctrl+F` | Find in Page |
+| `Ctrl+D` | Bookmark page |
+| `Ctrl+R` | Reload |
+| `Ctrl+Shift+R` | Reading Mode |
+| `Ctrl+Shift+S` | Screenshot |
+| `Ctrl+B` | Toggle Sidebar |
+| `F11` | Fullscreen |
+| `Alt+←/→` | Back/Forward |
 
-- **Mac:** [Download .dmg](https://github.com/YOUR-USERNAME/shubham-maurya-browser/releases)
-- **Windows:** [Download .exe](https://github.com/YOUR-USERNAME/shubham-maurya-browser/releases)
-- **Linux:** [Download .AppImage](https://github.com/YOUR-USERNAME/shubham-maurya-browser/releases)
+---
 
-### Build From Source
+## 🛠️ Tech Stack
+
+- **Electron 31** — Desktop app framework
+- **Chromium** — Rendering engine
+- **Vanilla JS** — No framework overhead
+- **Custom Ad Blocker** — 200+ domain blacklist
+
+---
+
+## 🚀 Build From Source
 
 ```bash
-# Clone the repo
-git clone https://github.com/YOUR-USERNAME/shubham-maurya-browser.git
-cd shubham-maurya-browser
+# Clone
+git clone https://github.com/sm1646767-pshyco/Shubham-maurya-browser.git
+cd Shubham-maurya-browser
 
-# Install dependencies
+# Install
 npm install
 
-# Run in development
+# Run
 npm start
 
-# Build installers
-npm run build
+# Build
+npm run build:mac    # Mac
+npm run build:win    # Windows

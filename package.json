@@ -1,20 +1,22 @@
 {
   "name": "shubham-maurya-browser",
   "version": "1.0.0",
-  "description": "Shubham Maurya Browser — Ad-free universal browser by Shubham Maurya",
+  "description": "Ad-free universal browser by Shubham Maurya",
   "main": "main.js",
   "author": "Shubham Maurya",
   "license": "MIT",
   "scripts": {
-  "start": "electron .",
-  "build": "electron-builder --publish never",
-  "build:mac": "electron-builder --mac --publish never",
-  "build:win": "electron-builder --win --publish never",
-  "build:linux": "electron-builder --linux --publish never"
+    "start": "electron .",
+    "app": "electron .",
+    "app:debug": "electron . 2>&1",
+    "build": "electron-builder --publish never",
+    "build:mac": "electron-builder --mac --publish never",
+    "build:win": "electron-builder --win --publish never",
+    "build:linux": "electron-builder --linux --publish never"
   },
   "devDependencies": {
     "electron": "^31.0.0",
-    "electron-builder": "^26.15.3"
+    "electron-builder": "^24.13.3"
   },
   "build": {
     "appId": "com.shubhammaurya.browser",
@@ -31,66 +33,25 @@
       "package.json"
     ],
     "mac": {
-      "category": "public.app-category.productivity",
       "target": [
         {
           "target": "dmg",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        },
-        {
-          "target": "zip",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
+          "arch": ["arm64", "x64"]
         }
-      ]
+      ],
+      "category": "public.app-category.productivity"
     },
     "win": {
       "target": [
         {
           "target": "nsis",
-          "arch": [
-            "x64"
-          ]
+          "arch": ["x64"]
         }
       ]
     },
     "linux": {
-      "target": [
-        {
-          "target": "AppImage",
-          "arch": [
-            "x64"
-          ]
-        },
-        {
-          "target": "deb",
-          "arch": [
-            "x64"
-          ]
-        }
-      ],
-      "icon": "assets/icon.png",
+      "target": ["AppImage"],
       "category": "Network"
-    },
-    "dmg": {
-      "title": "Shubham Maurya Browser",
-      "contents": [
-        {
-          "x": 130,
-          "y": 220
-        },
-        {
-          "x": 410,
-          "y": 220,
-          "type": "link",
-          "path": "/Applications"
-        }
-      ]
     },
     "nsis": {
       "oneClick": false,
