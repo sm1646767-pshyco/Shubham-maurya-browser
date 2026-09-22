@@ -1,20 +1,24 @@
-const { app, BrowserWindow, ipcMain, session, Menu, shell, webContents } = require('electron');
+const { app, BrowserWindow, ipcMain, session, Menu, shell, webContents, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const os = require('os');
 
-// Silence SSL handshake errors from ad blocking
+// ═══════════════════════════════════════════════
+//   COMMAND LINE SWITCHES
+// ═══════════════════════════════════════════════
 app.commandLine.appendSwitch('log-level', '3');
 app.commandLine.appendSwitch('disable-logging');
+app.commandLine.appendSwitch('enable-features', 'WebContentsForceFullscreen');
 
 // ═══════════════════════════════════════════════
-//   AD DOMAIN BLACKLIST
+//   AD DOMAIN BLACKLIST — 250+ domains
 // ═══════════════════════════════════════════════
 const AD_DOMAINS = [
+  // Google Ads / Analytics
   'doubleclick.net', 'googlesyndication.com', 'googleadservices.com',
   'google-analytics.com', 'googletagmanager.com', 'googletagservices.com',
   'adservice.google.com', 'pagead2.googlesyndication.com',
   'analytics.google.com', 'ssl.google-analytics.com',
+  // Major Ad Networks
   'ads.yahoo.com', 'advertising.com', 'adnxs.com', 'adsrvr.org',
   'amazon-adsystem.com', 'criteo.com', 'criteo.net', 'taboola.com',
   'outbrain.com', 'pubmatic.com', 'rubiconproject.com', 'openx.net',
@@ -43,14 +47,29 @@ const AD_DOMAINS = [
   'lentainform.com', 'smi2.ru', 'marketgid.com', 'luxup.ru',
   'mytarget.ru', 'ironsrc.com', 'supersonicads.com', 'adjust.com',
   'appsflyer.com', 'branch.io', 'kochava.com',
+  // Trackers
   'scorecardresearch.com', 'quantserve.com', 'moatads.com',
   'hotjar.com', 'mouseflow.com', 'crazyegg.com', 'luckyorange.com',
   'clarity.ms', 'fullstory.com', 'smartlook.com', 'logrocket.com',
   'connect.facebook.net', 'bat.bing.com', 'analytics.tiktok.com',
   'ads.pinterest.com', 'static.ads-twitter.com', 'analytics.twitter.com',
+  // Other Networks
   'mediavine.com', 'adthrive.com', 'ezoic.net', 'ezoic.com',
   'monumetric.com', 'pubfuture.com', 'onesignal.com', 'pushcrew.com',
-  'pushengage.com', 'izooto.com'
+  'pushengage.com', 'izooto.com', 'adition.com', 'adroll.com',
+  'adsafeprotected.com', 'advertising.com', 'adsystem.com',
+  'bidswitch.net', 'bluekai.com', 'brealtime.com', 'contextweb.com',
+  'crwdcntrl.net', 'datalogix.com', 'dotomi.com', 'eloqua.com',
+  'exelator.com', 'eyeota.net', 'gumgum.com', 'indexexchange.com',
+  'inmobi.com', 'krxd.net', 'lijit.com', 'marketplace.android.com',
+  'mathtag.com', 'ml314.com', 'moatads.com', 'mookie1.com',
+  'netmng.com', 'nexac.com', 'omtrdc.net', 'openx.net',
+  'owneriq.net', 'pubmatic.com', 'rubiconproject.com', 'rfihub.com',
+  'serving-sys.com', 'sitescout.com', 'smartadserver.com',
+  'spotxchange.com', 'springserve.com', 'stickyadstv.com',
+  'tapad.com', 'teads.tv', 'tidaltv.com', 'tremorhub.com',
+  'tribalfusion.com', 'turn.com', 'vidora.com', 'yieldmo.com',
+  'zeotap.com'
 ];
 
 const AD_URL_PATTERNS = [
@@ -77,10 +96,17 @@ const WHITELIST = [
   'googlevideo.com/initplayback', 'googleapis.com',
   'gstatic.com', 'fonts.googleapis.com', 'fonts.gstatic.com',
   'cdn.jsdelivr.net', 'unpkg.com', 'cdnjs.cloudflare.com',
-  'youtube.com/youtubei', 'youtube.com/generate_204'
+  'youtube.com/youtubei', 'youtube.com/generate_204',
+  'chatgpt.com', 'chat.openai.com', 'openai.com', 'oaistatic.com',
+  'oaiusercontent.com', 'claude.ai', 'anthropic.com',
+  'gemini.google.com', 'bard.google.com',
+  'wikipedia.org', 'wikimedia.org', 'stackoverflow.com',
+  'reddit.com', 'redd.it', 'twitter.com', 'x.com',
+  'instagram.com', 'facebook.com', 'linkedin.com'
 ];
 
 let blockedCount = 0;
+let stats = { blocked: 0, timeSaved: 0, dataSaved: 0, sitesVisited: 0 };
 
 function shouldBlock(url) {
   try {
@@ -96,6 +122,7 @@ function shouldBlock(url) {
 //   AD HIDE CSS
 // ═══════════════════════════════════════════════
 const AD_HIDE_CSS = `
+  /* YouTube ads */
   .ytp-ad-module, .ytp-ad-overlay-container, .ytp-ad-progress-list,
   .ytp-ad-image-overlay, .ytp-ad-text-overlay, .ytp-ad-player-overlay,
   .ytp-ad-player-overlay-flyout-cta, .ytp-ad-survey-questions, .ytp-ad-survey,
@@ -104,16 +131,21 @@ const AD_HIDE_CSS = `
   ytd-banner-promo-renderer, ytd-statement-banner-renderer,
   ytd-compact-promoted-video-renderer, ytd-promoted-sparkles-text-search-renderer,
   #player-ads, #masthead-ad, .ytp-featured-product, .ytp-suggested-action,
+  /* Google search ads */
   .commercial-unit-desktop-top, .commercial-unit-desktop-rhs,
   .commercial-unit-mobile-top, .commercial-unit-mobile-bottom,
   #tads, #tadsb, #bottomads, #rhsads, [data-text-ad="1"], [data-text-ad-slot],
+  /* Generic */
   div[aria-label="Ads"], div[aria-label="Advertisement"],
   [id^="div-gpt-ad-"], [id^="google_ads_iframe_"], [id^="aswift_"],
   iframe[id^="google_ads_iframe"], iframe[src*="doubleclick.net"],
   iframe[src*="googlesyndication.com"], iframe[src*="adservice.google"],
-  iframe[src*="/pagead/"], ins.adsbygoogle, .adsbygoogle {
+  iframe[src*="/pagead/"], ins.adsbygoogle, .adsbygoogle,
+  /* Anti-adblock overlays */
+  .adblock-overlay, .adblocker-detected, [class*="adblock-warning"] {
     display: none !important;
   }
+  /* Protect video player */
   #movie_player, .html5-video-player, .html5-video-container,
   .html5-main-video, video {
     display: revert !important;
@@ -128,8 +160,8 @@ const AD_HIDE_CSS = `
 // ═══════════════════════════════════════════════
 const AD_KILLER_JS = `
 (function() {
-  if (window.__adKillerInstalled) return;
-  window.__adKillerInstalled = true;
+  if (window.__smAdKillerV3) return;
+  window.__smAdKillerV3 = true;
 
   function isProtected(el) {
     if (!el) return true;
@@ -207,6 +239,59 @@ const AD_KILLER_JS = `
     }
   }
 
+  // ═══ SponsorBlock ═══
+  async function sponsorBlockSkip() {
+    if (!location.hostname.includes('youtube.com')) return;
+    if (!location.pathname.includes('/watch')) return;
+    const video = document.querySelector('video');
+    if (!video || !video.duration) return;
+    const videoId = new URLSearchParams(location.search).get('v');
+    if (!videoId || video.__sbId === videoId) return;
+    video.__sbId = videoId;
+    try {
+      const res = await fetch('https://sponsor.ajay.app/api/skipSegments/' + videoId);
+      if (!res.ok) return;
+      const segments = await res.json();
+      if (segments && segments.length) {
+        const checkSkip = () => {
+          const t = video.currentTime;
+          for (const seg of segments) {
+            if (t >= seg.segment[0] && t < seg.segment[1]) {
+              video.currentTime = seg.segment[1];
+              console.log('[SponsorBlock] Skipped', seg.category);
+              break;
+            }
+          }
+        };
+        video.addEventListener('timeupdate', checkSkip);
+      }
+    } catch (e) {}
+  }
+
+  // Anti-adblock bypass
+  function bypassAntiAdblock() {
+    // Remove common anti-adblock overlays
+    const antiSelectors = [
+      '[class*="adblock"]', '[id*="adblock"]',
+      '[class*="ad-block"]', '[id*="ad-block"]',
+      '[class*="adwall"]', '[class*="ad-wall"]'
+    ];
+    antiSelectors.forEach(sel => {
+      try {
+        document.querySelectorAll(sel).forEach(el => {
+          if (isProtected(el)) return;
+          if (el.tagName === 'BODY' || el.tagName === 'HTML') return;
+          el.remove();
+        });
+      } catch (e) {}
+    });
+    // Restore body overflow
+    if (document.body) {
+      document.body.style.overflow = 'auto';
+      document.body.style.position = 'static';
+    }
+  }
+
   document.addEventListener('volumechange', (e) => {
     const v = e.target;
     if (v && v.tagName === 'VIDEO') {
@@ -230,11 +315,19 @@ const AD_KILLER_JS = `
     try { window.Notification.requestPermission = () => Promise.resolve('denied'); } catch (e) {}
   }
 
-  setInterval(() => { removeAds(); youtubeAdSkip(); }, 1000);
+  setInterval(() => {
+    removeAds();
+    youtubeAdSkip();
+    bypassAntiAdblock();
+  }, 1000);
 
   const observer = new MutationObserver((mutations) => {
     for (const m of mutations) {
-      if (m.addedNodes.length) { removeAds(); youtubeAdSkip(); break; }
+      if (m.addedNodes.length) {
+        removeAds();
+        youtubeAdSkip();
+        break;
+      }
     }
   });
 
@@ -244,7 +337,8 @@ const AD_KILLER_JS = `
   }
   startObserver();
 
-  console.log('[AdKiller] ✅ Installed');
+  sponsorBlockSkip();
+  console.log('[SM AdKiller v3] ✅ Installed');
 })();
 `;
 
@@ -259,6 +353,9 @@ function applyAdBlockToSession(sess) {
     if (details.resourceType === 'mainFrame') return callback({ cancel: false });
     if (shouldBlock(details.url)) {
       blockedCount++;
+      stats.blocked = blockedCount;
+      stats.timeSaved += 0.5;
+      stats.dataSaved += 50;
       updateBadge();
       return callback({ cancel: true });
     }
@@ -312,10 +409,7 @@ function attachDownloadHandler(sess) {
     const savePath = path.join(app.getPath('downloads'), filename);
 
     const download = {
-      id,
-      filename,
-      url,
-      path: savePath,
+      id, filename, url, path: savePath,
       totalBytes: item.getTotalBytes(),
       receivedBytes: 0,
       state: 'progressing',
@@ -334,11 +428,8 @@ function attachDownloadHandler(sess) {
       download.state = state;
       if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.send('download-progress', {
-          id,
-          receivedBytes: download.receivedBytes,
-          totalBytes: download.totalBytes,
-          state,
-          speed: item.getReceivedBytes() / ((Date.now() - download.startTime) / 1000),
+          id, receivedBytes: download.receivedBytes,
+          totalBytes: download.totalBytes, state,
         });
       }
     });
@@ -349,10 +440,7 @@ function attachDownloadHandler(sess) {
       download.endTime = Date.now();
       if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.send('download-done', {
-          id,
-          state,
-          path: download.path,
-          filename: download.filename,
+          id, state, path: download.path, filename: download.filename,
         });
       }
     });
@@ -368,9 +456,9 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
-    minWidth: 800,
+    minWidth: 900,
     minHeight: 600,
-    title: 'Shubham Maurya Browser',
+    title: 'Universal Browser',
     backgroundColor: '#1e1e2e',
     titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'default',
     trafficLightPosition: { x: 16, y: 16 },
@@ -382,45 +470,42 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: false,
-      webviewTag: true,
+      webviewTag: true,                // ⚠️ ZAROORI
       partition: 'persist:browser',
-      webSecurity: true
+      webSecurity: true,
+      allowRunningInsecureContent: false,
+      experimentalFeatures: false,
+      backgroundThrottling: false,
+      spellcheck: true
     }
   });
 
   mainWindow.loadFile('index.html');
 
   mainWindow.on('enter-full-screen', () => {
-    if (mainWindow && !mainWindow.isDestroyed()) {
+    if (mainWindow && !mainWindow.isDestroyed())
       mainWindow.webContents.send('fullscreen-changed', true);
-    }
   });
   mainWindow.on('leave-full-screen', () => {
-    if (mainWindow && !mainWindow.isDestroyed()) {
+    if (mainWindow && !mainWindow.isDestroyed())
       mainWindow.webContents.send('fullscreen-changed', false);
-    }
   });
 
   mainWindow.webContents.on('did-attach-webview', (event, wc) => {
     applyAdBlockToSession(wc.session);
     attachDownloadHandler(wc.session);
-
     wc.setUserAgent(
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
       '(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
     );
-
     wc.on('did-finish-load', () => injectAdKiller(wc));
     wc.on('dom-ready', () => injectAdKiller(wc));
-
     wc.setWindowOpenHandler(({ url }) => {
       if (shouldBlock(url)) return { action: 'deny' };
-      if (mainWindow && !mainWindow.isDestroyed()) {
+      if (mainWindow && !mainWindow.isDestroyed())
         mainWindow.webContents.send('open-new-tab', url);
-      }
       return { action: 'deny' };
     });
-
     wc.on('will-navigate', (ev, url) => {
       if (shouldBlock(url)) ev.preventDefault();
     });
@@ -436,9 +521,8 @@ function createWindow() {
 }
 
 function updateBadge() {
-  if (mainWindow && !mainWindow.isDestroyed()) {
+  if (mainWindow && !mainWindow.isDestroyed())
     mainWindow.webContents.send('blocked-count', blockedCount);
-  }
 }
 
 // ═══════════════════════════════════════════════
@@ -447,16 +531,16 @@ function updateBadge() {
 ipcMain.handle('get-blocked-count', () => blockedCount);
 ipcMain.handle('reset-blocked-count', () => {
   blockedCount = 0;
+  stats = { blocked: 0, timeSaved: 0, dataSaved: 0, sitesVisited: 0 };
   updateBadge();
   return blockedCount;
 });
+ipcMain.handle('get-stats', () => stats);
+ipcMain.handle('increment-sites', () => { stats.sitesVisited++; return stats.sitesVisited; });
 
 ipcMain.on('webview-ready', (e, id) => {
   const wc = webContents.fromId(id);
-  if (wc) {
-    applyAdBlockToSession(wc.session);
-    injectAdKiller(wc);
-  }
+  if (wc) { applyAdBlockToSession(wc.session); injectAdKiller(wc); }
 });
 
 // Window controls
@@ -472,34 +556,16 @@ ipcMain.handle('window-toggle-fullscreen', () => {
   mainWindow.setFullScreen(!isFs);
   return !isFs;
 });
-ipcMain.handle('window-is-fullscreen', () => {
-  return mainWindow ? mainWindow.isFullScreen() : false;
-});
+ipcMain.handle('window-is-fullscreen', () => mainWindow ? mainWindow.isFullScreen() : false);
 
-// ═══════════════════════════════════════════════
-//   DOWNLOADS IPC
-// ═══════════════════════════════════════════════
+// Downloads
 ipcMain.handle('get-downloads', () => downloads);
-ipcMain.handle('clear-downloads', () => {
-  downloads.length = 0;
-  return true;
-});
+ipcMain.handle('clear-downloads', () => { downloads.length = 0; return true; });
+ipcMain.on('open-downloaded-file', (e, p) => { if (p && fs.existsSync(p)) shell.openPath(p); });
+ipcMain.on('show-in-folder', (e, p) => { if (p && fs.existsSync(p)) shell.showItemInFolder(p); });
+ipcMain.on('open-external', (e, url) => { if (url && /^https?:\/\//i.test(url)) shell.openExternal(url); });
 
-ipcMain.on('open-downloaded-file', (e, p) => {
-  if (p && fs.existsSync(p)) shell.openPath(p);
-});
-
-ipcMain.on('show-in-folder', (e, p) => {
-  if (p && fs.existsSync(p)) shell.showItemInFolder(p);
-});
-
-ipcMain.on('open-external', (e, url) => {
-  if (url && /^https?:\/\//i.test(url)) shell.openExternal(url);
-});
-
-// ═══════════════════════════════════════════════
-//   SCREENSHOT IPC
-// ═══════════════════════════════════════════════
+// Screenshot
 ipcMain.handle('save-screenshot', async (e, dataURL) => {
   try {
     const base64 = dataURL.replace(/^data:image\/\w+;base64,/, '');
@@ -515,55 +581,32 @@ ipcMain.handle('save-screenshot', async (e, dataURL) => {
   }
 });
 
-// ═══════════════════════════════════════════════
-//   READING MODE IPC
-// ═══════════════════════════════════════════════
+// Reading Mode
 ipcMain.handle('extract-article', async (e) => {
   const wc = e.sender;
   try {
     const result = await wc.executeJavaScript(`
       (function() {
-        const title = document.querySelector('h1')?.innerText
-                   || document.title || 'Untitled';
-        const author = document.querySelector('[rel="author"]')?.innerText
-                    || document.querySelector('.author')?.innerText
-                    || document.querySelector('[class*="author"]')?.innerText
-                    || '';
-        const date = document.querySelector('time')?.innerText
-                  || document.querySelector('[class*="date"]')?.innerText
-                  || '';
-
+        const title = document.querySelector('h1')?.innerText || document.title || 'Untitled';
+        const author = document.querySelector('[rel="author"]')?.innerText || '';
+        const date = document.querySelector('time')?.innerText || '';
         let article = document.querySelector('article')
                    || document.querySelector('[role="main"]')
                    || document.querySelector('main')
-                   || document.querySelector('.post-content')
-                   || document.querySelector('.article-content')
-                   || document.querySelector('.entry-content')
-                   || document.querySelector('#content')
                    || document.body;
-
         const clone = article.cloneNode(true);
-
-        clone.querySelectorAll('script, style, nav, header, footer, aside, iframe, noscript, .ad, .ads, [class*="ad-"], [class*="sidebar"], [class*="comment"], [class*="share"], [class*="social"], button, form').forEach(el => el.remove());
-
+        clone.querySelectorAll('script, style, nav, header, footer, aside, iframe, noscript, .ad, .ads, [class*="ad-"], [class*="sidebar"], [class*="comment"], [class*="share"], button, form').forEach(el => el.remove());
         const blocks = [];
         clone.querySelectorAll('h1, h2, h3, h4, p, blockquote, ul, ol, pre, img').forEach(el => {
           if (el.tagName === 'IMG') {
             const src = el.src || el.dataset.src;
-            if (src && src.startsWith('http')) {
-              blocks.push({ type: 'img', src, alt: el.alt || '' });
-            }
+            if (src && src.startsWith('http')) blocks.push({ type: 'img', src, alt: el.alt || '' });
           } else {
             const text = el.innerText.trim();
-            if (text.length > 20 || /^H[1-4]$/.test(el.tagName)) {
-              blocks.push({
-                type: el.tagName.toLowerCase(),
-                text,
-              });
-            }
+            if (text.length > 20 || /^H[1-4]$/.test(el.tagName))
+              blocks.push({ type: el.tagName.toLowerCase(), text });
           }
         });
-
         return { title, author, date, blocks, url: location.href };
       })();
     `, true);
@@ -577,7 +620,7 @@ ipcMain.handle('extract-article', async (e) => {
 //   APP LIFECYCLE
 // ═══════════════════════════════════════════════
 app.whenReady().then(() => {
-  app.setName('Shubham Maurya Browser');
+  app.setName('Universal Browser');
 
   applyAdBlockToSession(session.defaultSession);
   attachDownloadHandler(session.defaultSession);
@@ -593,7 +636,6 @@ app.whenReady().then(() => {
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
     '(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
   );
-  wvSession.clearCache().catch(() => {});
 
   createWindow();
 

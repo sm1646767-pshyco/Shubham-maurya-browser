@@ -1,14 +1,18 @@
 {
-  "name": "shubham-maurya-browser",
-  "version": "1.0.0",
-  "description": "Ad-free universal browser by Shubham Maurya",
+  "name": "universal-browser",
+  "version": "3.1.0",
+  "description": "Universal Browser — Ad-free, fast, private browser by Shubham Maurya",
   "main": "main.js",
   "author": "Shubham Maurya",
   "license": "MIT",
+  "homepage": "https://github.com/sm1646767-pshyco/Shubham-maurya-browser",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sm1646767-pshyco/Shubham-maurya-browser.git"
+  },
   "scripts": {
     "start": "electron .",
-    "app": "electron .",
-    "app:debug": "electron . 2>&1",
+    "start:debug": "electron . 2>&1",
     "build": "electron-builder --publish never",
     "build:mac": "electron-builder --mac --publish never",
     "build:win": "electron-builder --win --publish never",
@@ -20,7 +24,8 @@
   },
   "build": {
     "appId": "com.shubhammaurya.browser",
-    "productName": "ShubhamMauryaBrowser",
+    "productName": "Universal Browser",
+    "copyright": "Copyright © 2026 Shubham Maurya",
     "directories": {
       "output": "dist"
     },
@@ -34,23 +39,21 @@
     ],
     "mac": {
       "target": [
-        {
-          "target": "dmg",
-          "arch": ["arm64", "x64"]
-        }
+        { "target": "dmg", "arch": ["arm64", "x64"] },
+        { "target": "zip", "arch": ["arm64", "x64"] }
       ],
       "category": "public.app-category.productivity"
     },
     "win": {
       "target": [
-        {
-          "target": "nsis",
-          "arch": ["x64"]
-        }
+        { "target": "nsis", "arch": ["x64"] }
       ]
     },
     "linux": {
-      "target": ["AppImage"],
+      "target": [
+        { "target": "AppImage", "arch": ["x64"] },
+        { "target": "deb", "arch": ["x64"] }
+      ],
       "category": "Network"
     },
     "nsis": {
@@ -58,7 +61,7 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Shubham Maurya Browser"
+      "shortcutName": "Universal Browser"
     }
   }
 }

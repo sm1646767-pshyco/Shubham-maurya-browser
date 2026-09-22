@@ -1,18 +1,18 @@
-# 🌐 Shubham Maurya Browser
+# 🌐 Universal Browser
 
 > **Ad-free · Fast · Private · Crafted with ❤️ by Shubham Maurya**
 
-Ek modern, ad-free universal browser jo Electron par based hai.
+Universal Browser is a modern, ad-free universal browser built on Electron. It blocks ads on YouTube, Google, and every website.
+
+---
 
 ## 📥 Download
 
 | Platform | Download |
 |----------|----------|
-| 🍎 **Mac (Apple Silicon)** | [Download .dmg](https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/download/v1.0.0/ShubhamMauryaBrowser-1.0.0-arm64.dmg) |
-| 🍎 **Mac (Intel)** | [Download .dmg](https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/download/v1.0.0/ShubhamMauryaBrowser-1.0.0.dmg) |
-| 🪟 **Windows** | [Download .exe](https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/download/v1.0.0/ShubhamMauryaBrowser.Setup.1.0.0.exe) |
-
-Ya phir [**Releases page**](https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases) pe jao.
+| 🍎 **Mac (Apple Silicon)** | [Download .dmg](https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases) |
+| 🍎 **Mac (Intel)** | [Download .dmg](https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases) |
+| 🪟 **Windows** | [Download .exe](https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases) |
 
 🌐 **Website:** [sm1646767-pshyco.github.io/Shubham-maurya-browser](https://sm1646767-pshyco.github.io/Shubham-maurya-browser/)
 
@@ -20,19 +20,31 @@ Ya phir [**Releases page**](https://github.com/sm1646767-pshyco/Shubham-maurya-b
 
 ## ✨ Features
 
-- 🛡️ **Built-in Ad Blocker** — 200+ domains blocked
+- 🛡️ **Built-in Ad Blocker** (250+ domains)
 - 🎬 **YouTube Ad Auto-Skip**
-- ⌨️ **Command Palette** (Ctrl+K)
+- 📺 **SponsorBlock** (YouTube sponsored segments)
+- ⌨️ **Command Palette** (`Ctrl+K`)
 - 📑 **Vertical Sidebar Tabs**
-- 🔍 **Find in Page** (Ctrl+F)
 - 📖 **Reading Mode**
 - 📸 **Screenshot Tool**
 - 🕶️ **Incognito Mode**
+- 🔐 **Password Manager**
+- 📊 **Statistics Dashboard**
+- 🎬 **Picture-in-Picture**
 - 📥 **Downloads Tracker**
 - 📌 **Pinned Tabs**
 - ⭐ **Bookmarks & History**
-- 🌓 **Dark/Light Theme**
+- 🌓 **Dark/Light Theme + Accent Color**
+- 🌐 **6 Search Engines** (Google, DDG, Bing, Brave, ChatGPT, YouTube)
 - 🔒 **Zero Telemetry**
+
+---
+
+## 📋 Version History
+
+See [CHANGELOG.md](CHANGELOG.md) for full version history.
+
+**Current Version:** v3.1.0
 
 ---
 
@@ -42,13 +54,14 @@ Ya phir [**Releases page**](https://github.com/sm1646767-pshyco/Shubham-maurya-b
 |----------|--------|
 | `Ctrl+T` | New Tab |
 | `Ctrl+W` | Close Tab |
-| `Ctrl+L` | Focus URL bar |
+| `Ctrl+L` | Focus URL |
 | `Ctrl+K` | Command Palette |
 | `Ctrl+F` | Find in Page |
-| `Ctrl+D` | Bookmark page |
+| `Ctrl+D` | Bookmark |
 | `Ctrl+R` | Reload |
 | `Ctrl+Shift+R` | Reading Mode |
 | `Ctrl+Shift+S` | Screenshot |
+| `Ctrl+Shift+D` | Downloads |
 | `Ctrl+B` | Toggle Sidebar |
 | `F11` | Fullscreen |
 | `Alt+←/→` | Back/Forward |
@@ -57,26 +70,17 @@ Ya phir [**Releases page**](https://github.com/sm1646767-pshyco/Shubham-maurya-b
 
 ## 🛠️ Tech Stack
 
-- **Electron 31** — Desktop app framework
+- **Electron 31** — Desktop framework
 - **Chromium** — Rendering engine
-- **Vanilla JS** — No framework overhead
-- **Custom Ad Blocker** — 200+ domain blacklist
+- **Vanilla JavaScript** — No framework overhead
+- **Custom Ad Blocker** — 250+ domain blacklist
 
 ---
 
 ## 🚀 Build From Source
 
 ```bash
-# Clone
 git clone https://github.com/sm1646767-pshyco/Shubham-maurya-browser.git
 cd Shubham-maurya-browser
-
-# Install
 npm install
-
-# Run
 npm start
-
-# Build
-npm run build:mac    # Mac
-npm run build:win    # Windows

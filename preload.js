@@ -4,6 +4,8 @@ contextBridge.exposeInMainWorld('browserAPI', {
   // Ad blocker
   getBlockedCount: () => ipcRenderer.invoke('get-blocked-count'),
   resetBlockedCount: () => ipcRenderer.invoke('reset-blocked-count'),
+  getStats: () => ipcRenderer.invoke('get-stats'),
+  incrementSites: () => ipcRenderer.invoke('increment-sites'),
   onBlockedCount: (cb) => ipcRenderer.on('blocked-count', (e, n) => cb(n)),
   onOpenNewTab: (cb) => ipcRenderer.on('open-new-tab', (e, url) => cb(url)),
   notifyWebviewReady: (id) => ipcRenderer.send('webview-ready', id),
@@ -31,6 +33,6 @@ contextBridge.exposeInMainWorld('browserAPI', {
   // Reading Mode
   extractArticle: () => ipcRenderer.invoke('extract-article'),
 
-  // Open external
+  // External
   openExternal: (url) => ipcRenderer.send('open-external', url),
 });
