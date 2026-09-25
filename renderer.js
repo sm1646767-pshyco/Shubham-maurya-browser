@@ -1577,3 +1577,26 @@ setTimeout(attachSidebarEvents, 1000);
 
   console.log('[AI] Initialized');
 })();
+async function summarizeCurrentPage() {
+  var tab = tabs.find(function(t) { return t.id === activeTabId; });
+  if (!tab) return;
+
+  addMessage('📄 Summarizing page...', 'assistant loading');
+
+  try {
+    var contentResult = await window.browserAPI.aiGetPageContent();
+    if (!contentResult.success) {
+      addMessage('❌ Could not read page', 'assistant');
+      return;
+    }
+
+    var summaryResult = await window.browserAPI.aiSummarize(contentResult.text);
+    if (summaryResult.success) {
+      addMessage(summaryResult.text, 'assistant');
+    } else {
+      addMessage('❌ ' + summaryResult.error, 'assistant');
+    }
+  } catch (err) {
+    addMessage('❌ ' + err.message, 'assistant');
+  }
+}
