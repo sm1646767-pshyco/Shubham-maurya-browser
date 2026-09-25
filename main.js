@@ -1,24 +1,16 @@
-const { app, BrowserWindow, ipcMain, session, Menu, shell, webContents, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, session, Menu, shell, webContents } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
-// ═══════════════════════════════════════════════
-//   COMMAND LINE SWITCHES
-// ═══════════════════════════════════════════════
 app.commandLine.appendSwitch('log-level', '3');
 app.commandLine.appendSwitch('disable-logging');
-app.commandLine.appendSwitch('enable-features', 'WebContentsForceFullscreen');
 
-// ═══════════════════════════════════════════════
-//   AD DOMAIN BLACKLIST — 250+ domains
-// ═══════════════════════════════════════════════
+// ═══ AD DOMAINS ═══
 const AD_DOMAINS = [
-  // Google Ads / Analytics
   'doubleclick.net', 'googlesyndication.com', 'googleadservices.com',
   'google-analytics.com', 'googletagmanager.com', 'googletagservices.com',
   'adservice.google.com', 'pagead2.googlesyndication.com',
   'analytics.google.com', 'ssl.google-analytics.com',
-  // Major Ad Networks
   'ads.yahoo.com', 'advertising.com', 'adnxs.com', 'adsrvr.org',
   'amazon-adsystem.com', 'criteo.com', 'criteo.net', 'taboola.com',
   'outbrain.com', 'pubmatic.com', 'rubiconproject.com', 'openx.net',
@@ -47,29 +39,14 @@ const AD_DOMAINS = [
   'lentainform.com', 'smi2.ru', 'marketgid.com', 'luxup.ru',
   'mytarget.ru', 'ironsrc.com', 'supersonicads.com', 'adjust.com',
   'appsflyer.com', 'branch.io', 'kochava.com',
-  // Trackers
   'scorecardresearch.com', 'quantserve.com', 'moatads.com',
   'hotjar.com', 'mouseflow.com', 'crazyegg.com', 'luckyorange.com',
   'clarity.ms', 'fullstory.com', 'smartlook.com', 'logrocket.com',
   'connect.facebook.net', 'bat.bing.com', 'analytics.tiktok.com',
   'ads.pinterest.com', 'static.ads-twitter.com', 'analytics.twitter.com',
-  // Other Networks
   'mediavine.com', 'adthrive.com', 'ezoic.net', 'ezoic.com',
   'monumetric.com', 'pubfuture.com', 'onesignal.com', 'pushcrew.com',
-  'pushengage.com', 'izooto.com', 'adition.com', 'adroll.com',
-  'adsafeprotected.com', 'advertising.com', 'adsystem.com',
-  'bidswitch.net', 'bluekai.com', 'brealtime.com', 'contextweb.com',
-  'crwdcntrl.net', 'datalogix.com', 'dotomi.com', 'eloqua.com',
-  'exelator.com', 'eyeota.net', 'gumgum.com', 'indexexchange.com',
-  'inmobi.com', 'krxd.net', 'lijit.com', 'marketplace.android.com',
-  'mathtag.com', 'ml314.com', 'moatads.com', 'mookie1.com',
-  'netmng.com', 'nexac.com', 'omtrdc.net', 'openx.net',
-  'owneriq.net', 'pubmatic.com', 'rubiconproject.com', 'rfihub.com',
-  'serving-sys.com', 'sitescout.com', 'smartadserver.com',
-  'spotxchange.com', 'springserve.com', 'stickyadstv.com',
-  'tapad.com', 'teads.tv', 'tidaltv.com', 'tremorhub.com',
-  'tribalfusion.com', 'turn.com', 'vidora.com', 'yieldmo.com',
-  'zeotap.com'
+  'pushengage.com', 'izooto.com'
 ];
 
 const AD_URL_PATTERNS = [
@@ -97,12 +74,14 @@ const WHITELIST = [
   'gstatic.com', 'fonts.googleapis.com', 'fonts.gstatic.com',
   'cdn.jsdelivr.net', 'unpkg.com', 'cdnjs.cloudflare.com',
   'youtube.com/youtubei', 'youtube.com/generate_204',
-  'chatgpt.com', 'chat.openai.com', 'openai.com', 'oaistatic.com',
-  'oaiusercontent.com', 'claude.ai', 'anthropic.com',
-  'gemini.google.com', 'bard.google.com',
-  'wikipedia.org', 'wikimedia.org', 'stackoverflow.com',
-  'reddit.com', 'redd.it', 'twitter.com', 'x.com',
-  'instagram.com', 'facebook.com', 'linkedin.com'
+  'chatgpt.com', 'chat.openai.com', 'openai.com',
+  'claude.ai', 'anthropic.com',
+  'instagram.com', 'facebook.com', 'fbcdn.net',
+  'twitter.com', 'x.com', 'linkedin.com', 'reddit.com',
+  'whatsapp.com', 'telegram.org', 'discord.com',
+  'wikipedia.org', 'stackoverflow.com',
+  'amazon.com', 'flipkart.com', 'netflix.com', 'spotify.com',
+  'mail.google.com', 'outlook.live.com', 'drive.google.com'
 ];
 
 let blockedCount = 0;
@@ -118,11 +97,7 @@ function shouldBlock(url) {
   } catch { return false; }
 }
 
-// ═══════════════════════════════════════════════
-//   AD HIDE CSS
-// ═══════════════════════════════════════════════
 const AD_HIDE_CSS = `
-  /* YouTube ads */
   .ytp-ad-module, .ytp-ad-overlay-container, .ytp-ad-progress-list,
   .ytp-ad-image-overlay, .ytp-ad-text-overlay, .ytp-ad-player-overlay,
   .ytp-ad-player-overlay-flyout-cta, .ytp-ad-survey-questions, .ytp-ad-survey,
@@ -131,21 +106,16 @@ const AD_HIDE_CSS = `
   ytd-banner-promo-renderer, ytd-statement-banner-renderer,
   ytd-compact-promoted-video-renderer, ytd-promoted-sparkles-text-search-renderer,
   #player-ads, #masthead-ad, .ytp-featured-product, .ytp-suggested-action,
-  /* Google search ads */
   .commercial-unit-desktop-top, .commercial-unit-desktop-rhs,
   .commercial-unit-mobile-top, .commercial-unit-mobile-bottom,
   #tads, #tadsb, #bottomads, #rhsads, [data-text-ad="1"], [data-text-ad-slot],
-  /* Generic */
   div[aria-label="Ads"], div[aria-label="Advertisement"],
   [id^="div-gpt-ad-"], [id^="google_ads_iframe_"], [id^="aswift_"],
   iframe[id^="google_ads_iframe"], iframe[src*="doubleclick.net"],
   iframe[src*="googlesyndication.com"], iframe[src*="adservice.google"],
-  iframe[src*="/pagead/"], ins.adsbygoogle, .adsbygoogle,
-  /* Anti-adblock overlays */
-  .adblock-overlay, .adblocker-detected, [class*="adblock-warning"] {
+  iframe[src*="/pagead/"], ins.adsbygoogle, .adsbygoogle {
     display: none !important;
   }
-  /* Protect video player */
   #movie_player, .html5-video-player, .html5-video-container,
   .html5-main-video, video {
     display: revert !important;
@@ -155,13 +125,10 @@ const AD_HIDE_CSS = `
   }
 `;
 
-// ═══════════════════════════════════════════════
-//   AD KILLER JS
-// ═══════════════════════════════════════════════
 const AD_KILLER_JS = `
 (function() {
-  if (window.__smAdKillerV3) return;
-  window.__smAdKillerV3 = true;
+  if (window.__adKillerInstalled) return;
+  window.__adKillerInstalled = true;
 
   function isProtected(el) {
     if (!el) return true;
@@ -226,8 +193,6 @@ const AD_KILLER_JS = `
           } catch (e) {}
         }
       }
-      const overlay = document.querySelector('.ytp-ad-overlay-container');
-      if (overlay) overlay.style.display = 'none';
     } else {
       const video = player.querySelector('video');
       if (video) {
@@ -238,67 +203,6 @@ const AD_KILLER_JS = `
       }
     }
   }
-
-  // ═══ SponsorBlock ═══
-  async function sponsorBlockSkip() {
-    if (!location.hostname.includes('youtube.com')) return;
-    if (!location.pathname.includes('/watch')) return;
-    const video = document.querySelector('video');
-    if (!video || !video.duration) return;
-    const videoId = new URLSearchParams(location.search).get('v');
-    if (!videoId || video.__sbId === videoId) return;
-    video.__sbId = videoId;
-    try {
-      const res = await fetch('https://sponsor.ajay.app/api/skipSegments/' + videoId);
-      if (!res.ok) return;
-      const segments = await res.json();
-      if (segments && segments.length) {
-        const checkSkip = () => {
-          const t = video.currentTime;
-          for (const seg of segments) {
-            if (t >= seg.segment[0] && t < seg.segment[1]) {
-              video.currentTime = seg.segment[1];
-              console.log('[SponsorBlock] Skipped', seg.category);
-              break;
-            }
-          }
-        };
-        video.addEventListener('timeupdate', checkSkip);
-      }
-    } catch (e) {}
-  }
-
-  // Anti-adblock bypass
-  function bypassAntiAdblock() {
-    // Remove common anti-adblock overlays
-    const antiSelectors = [
-      '[class*="adblock"]', '[id*="adblock"]',
-      '[class*="ad-block"]', '[id*="ad-block"]',
-      '[class*="adwall"]', '[class*="ad-wall"]'
-    ];
-    antiSelectors.forEach(sel => {
-      try {
-        document.querySelectorAll(sel).forEach(el => {
-          if (isProtected(el)) return;
-          if (el.tagName === 'BODY' || el.tagName === 'HTML') return;
-          el.remove();
-        });
-      } catch (e) {}
-    });
-    // Restore body overflow
-    if (document.body) {
-      document.body.style.overflow = 'auto';
-      document.body.style.position = 'static';
-    }
-  }
-
-  document.addEventListener('volumechange', (e) => {
-    const v = e.target;
-    if (v && v.tagName === 'VIDEO') {
-      const p = v.closest('#movie_player');
-      if (!p || !p.classList.contains('ad-showing')) v.__userMuted = v.muted;
-    }
-  }, true);
 
   const origOpen = window.open;
   window.open = function(url, ...args) {
@@ -315,19 +219,11 @@ const AD_KILLER_JS = `
     try { window.Notification.requestPermission = () => Promise.resolve('denied'); } catch (e) {}
   }
 
-  setInterval(() => {
-    removeAds();
-    youtubeAdSkip();
-    bypassAntiAdblock();
-  }, 1000);
+  setInterval(() => { removeAds(); youtubeAdSkip(); }, 1000);
 
   const observer = new MutationObserver((mutations) => {
     for (const m of mutations) {
-      if (m.addedNodes.length) {
-        removeAds();
-        youtubeAdSkip();
-        break;
-      }
+      if (m.addedNodes.length) { removeAds(); youtubeAdSkip(); break; }
     }
   });
 
@@ -336,15 +232,9 @@ const AD_KILLER_JS = `
     else setTimeout(startObserver, 100);
   }
   startObserver();
-
-  sponsorBlockSkip();
-  console.log('[SM AdKiller v3] ✅ Installed');
 })();
 `;
 
-// ═══════════════════════════════════════════════
-//   APPLY AD BLOCK
-// ═══════════════════════════════════════════════
 function applyAdBlockToSession(sess) {
   if (sess.__adblockApplied) return;
   sess.__adblockApplied = true;
@@ -354,25 +244,10 @@ function applyAdBlockToSession(sess) {
     if (shouldBlock(details.url)) {
       blockedCount++;
       stats.blocked = blockedCount;
-      stats.timeSaved += 0.5;
-      stats.dataSaved += 50;
       updateBadge();
       return callback({ cancel: true });
     }
     callback({ cancel: false });
-  });
-
-  sess.webRequest.onBeforeSendHeaders({ urls: ['<all_urls>'] }, (details, callback) => {
-    const headers = details.requestHeaders;
-    delete headers['X-Requested-With'];
-    if (headers['Referer']) {
-      try {
-        const refHost = new URL(headers['Referer']).hostname;
-        const reqHost = new URL(details.url).hostname;
-        if (refHost !== reqHost) delete headers['Referer'];
-      } catch { delete headers['Referer']; }
-    }
-    callback({ requestHeaders: headers });
   });
 
   sess.setPermissionRequestHandler((wc, permission, callback) => {
@@ -387,64 +262,6 @@ function applyAdBlockToSession(sess) {
 function injectAdKiller(wc) {
   wc.insertCSS(AD_HIDE_CSS).catch(() => {});
   wc.executeJavaScript(AD_KILLER_JS, true).catch(() => {});
-  wc.on('did-navigate-in-page', () => {
-    wc.insertCSS(AD_HIDE_CSS).catch(() => {});
-    wc.executeJavaScript(AD_KILLER_JS, true).catch(() => {});
-  });
-}
-
-// ═══════════════════════════════════════════════
-//   DOWNLOADS TRACKER
-// ═══════════════════════════════════════════════
-const downloads = [];
-
-function attachDownloadHandler(sess) {
-  if (sess.__downloadHandlerAttached) return;
-  sess.__downloadHandlerAttached = true;
-
-  sess.on('will-download', (event, item, webContents) => {
-    const id = Date.now() + '-' + Math.random().toString(36).slice(2, 8);
-    const filename = item.getFilename();
-    const url = item.getURL();
-    const savePath = path.join(app.getPath('downloads'), filename);
-
-    const download = {
-      id, filename, url, path: savePath,
-      totalBytes: item.getTotalBytes(),
-      receivedBytes: 0,
-      state: 'progressing',
-      startTime: Date.now(),
-    };
-    downloads.push(download);
-
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      mainWindow.webContents.send('download-started', {
-        id, filename, url, totalBytes: download.totalBytes
-      });
-    }
-
-    item.on('updated', (e, state) => {
-      download.receivedBytes = item.getReceivedBytes();
-      download.state = state;
-      if (mainWindow && !mainWindow.isDestroyed()) {
-        mainWindow.webContents.send('download-progress', {
-          id, receivedBytes: download.receivedBytes,
-          totalBytes: download.totalBytes, state,
-        });
-      }
-    });
-
-    item.once('done', (e, state) => {
-      download.state = state;
-      download.path = item.getSavePath();
-      download.endTime = Date.now();
-      if (mainWindow && !mainWindow.isDestroyed()) {
-        mainWindow.webContents.send('download-done', {
-          id, state, path: download.path, filename: download.filename,
-        });
-      }
-    });
-  });
 }
 
 // ═══════════════════════════════════════════════
@@ -456,7 +273,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
-    minWidth: 900,
+    minWidth: 800,
     minHeight: 600,
     title: 'Universal Browser',
     backgroundColor: '#1e1e2e',
@@ -470,42 +287,63 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: false,
-      webviewTag: true,                // ⚠️ ZAROORI
+      webviewTag: true,
       partition: 'persist:browser',
-      webSecurity: true,
-      allowRunningInsecureContent: false,
-      experimentalFeatures: false,
-      backgroundThrottling: false,
-      spellcheck: true
+      webSecurity: true
     }
   });
 
   mainWindow.loadFile('index.html');
-
-  mainWindow.on('enter-full-screen', () => {
-    if (mainWindow && !mainWindow.isDestroyed())
-      mainWindow.webContents.send('fullscreen-changed', true);
-  });
-  mainWindow.on('leave-full-screen', () => {
-    if (mainWindow && !mainWindow.isDestroyed())
-      mainWindow.webContents.send('fullscreen-changed', false);
-  });
+  mainWindow.webContents.openDevTools();
 
   mainWindow.webContents.on('did-attach-webview', (event, wc) => {
     applyAdBlockToSession(wc.session);
-    attachDownloadHandler(wc.session);
+
     wc.setUserAgent(
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
       '(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
     );
+
+    wc.setMaxListeners(50);
+
+    // Copy-paste
+    wc.on('before-input-event', (event, input) => {
+      const isMac = process.platform === 'darwin';
+      const mod = isMac ? input.meta : input.control;
+      if (mod && input.type === 'keyDown' && !input.shift) {
+        const key = input.key.toLowerCase();
+        if (key === 'c') { wc.copy(); event.preventDefault(); }
+        if (key === 'v') { wc.paste(); event.preventDefault(); }
+        if (key === 'x') { wc.cut(); event.preventDefault(); }
+        if (key === 'a') { wc.selectAll(); event.preventDefault(); }
+      }
+    });
+
+    // Right-click menu
+    wc.on('context-menu', (e, params) => {
+      const menu = Menu.buildFromTemplate([
+        { label: 'Cut', role: 'cut', enabled: params.editFlags.canCut },
+        { label: 'Copy', role: 'copy', enabled: params.editFlags.canCopy },
+        { label: 'Paste', role: 'paste', enabled: params.editFlags.canPaste },
+        { type: 'separator' },
+        { label: 'Select All', role: 'selectAll' },
+        { type: 'separator' },
+        { label: 'Inspect Element', click: () => wc.inspectElement(params.x, params.y) }
+      ]);
+      menu.popup();
+    });
+
     wc.on('did-finish-load', () => injectAdKiller(wc));
     wc.on('dom-ready', () => injectAdKiller(wc));
+
     wc.setWindowOpenHandler(({ url }) => {
       if (shouldBlock(url)) return { action: 'deny' };
-      if (mainWindow && !mainWindow.isDestroyed())
+      if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.send('open-new-tab', url);
+      }
       return { action: 'deny' };
     });
+
     wc.on('will-navigate', (ev, url) => {
       if (shouldBlock(url)) ev.preventDefault();
     });
@@ -521,59 +359,58 @@ function createWindow() {
 }
 
 function updateBadge() {
-  if (mainWindow && !mainWindow.isDestroyed())
+  if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.webContents.send('blocked-count', blockedCount);
+  }
 }
 
-// ═══════════════════════════════════════════════
-//   IPC HANDLERS
-// ═══════════════════════════════════════════════
+// ═══ IPC ═══
 ipcMain.handle('get-blocked-count', () => blockedCount);
 ipcMain.handle('reset-blocked-count', () => {
   blockedCount = 0;
-  stats = { blocked: 0, timeSaved: 0, dataSaved: 0, sitesVisited: 0 };
   updateBadge();
   return blockedCount;
 });
 ipcMain.handle('get-stats', () => stats);
-ipcMain.handle('increment-sites', () => { stats.sitesVisited++; return stats.sitesVisited; });
+ipcMain.handle('increment-sites', () => {
+  stats.sitesVisited++;
+  return stats.sitesVisited;
+});
 
 ipcMain.on('webview-ready', (e, id) => {
   const wc = webContents.fromId(id);
-  if (wc) { applyAdBlockToSession(wc.session); injectAdKiller(wc); }
+  if (wc) {
+    applyAdBlockToSession(wc.session);
+    injectAdKiller(wc);
+  }
 });
 
-// Window controls
-ipcMain.on('window-minimize', () => mainWindow && mainWindow.minimize());
-ipcMain.on('window-maximize', () => {
-  if (!mainWindow) return;
-  mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize();
-});
-ipcMain.on('window-close', () => mainWindow && mainWindow.close());
 ipcMain.handle('window-toggle-fullscreen', () => {
   if (!mainWindow) return false;
   const isFs = mainWindow.isFullScreen();
   mainWindow.setFullScreen(!isFs);
   return !isFs;
 });
+
 ipcMain.handle('window-is-fullscreen', () => mainWindow ? mainWindow.isFullScreen() : false);
 
-// Downloads
-ipcMain.handle('get-downloads', () => downloads);
-ipcMain.handle('clear-downloads', () => { downloads.length = 0; return true; });
-ipcMain.on('open-downloaded-file', (e, p) => { if (p && fs.existsSync(p)) shell.openPath(p); });
-ipcMain.on('show-in-folder', (e, p) => { if (p && fs.existsSync(p)) shell.showItemInFolder(p); });
-ipcMain.on('open-external', (e, url) => { if (url && /^https?:\/\//i.test(url)) shell.openExternal(url); });
+ipcMain.handle('tor-toggle', async (e, enable) => {
+  const wvSession = session.fromPartition('persist:browser');
+  if (enable) {
+    await wvSession.setProxy({ proxyRules: 'socks5://127.0.0.1:9050', proxyBypassRules: '<local>' });
+  } else {
+    await wvSession.setProxy({ proxyRules: '' });
+  }
+  return { success: true, enabled: enable };
+});
 
-// Screenshot
 ipcMain.handle('save-screenshot', async (e, dataURL) => {
   try {
     const base64 = dataURL.replace(/^data:image\/\w+;base64,/, '');
     const buffer = Buffer.from(base64, 'base64');
-    const dir = path.join(app.getPath('pictures'), 'ShubhamMauryaBrowser');
+    const dir = path.join(app.getPath('pictures'), 'UniversalBrowser');
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    const filename = `screenshot-${Date.now()}.png`;
-    const filepath = path.join(dir, filename);
+    const filepath = path.join(dir, `screenshot-${Date.now()}.png`);
     fs.writeFileSync(filepath, buffer);
     return { success: true, path: filepath };
   } catch (err) {
@@ -581,7 +418,6 @@ ipcMain.handle('save-screenshot', async (e, dataURL) => {
   }
 });
 
-// Reading Mode
 ipcMain.handle('extract-article', async (e) => {
   const wc = e.sender;
   try {
@@ -590,16 +426,13 @@ ipcMain.handle('extract-article', async (e) => {
         const title = document.querySelector('h1')?.innerText || document.title || 'Untitled';
         const author = document.querySelector('[rel="author"]')?.innerText || '';
         const date = document.querySelector('time')?.innerText || '';
-        let article = document.querySelector('article')
-                   || document.querySelector('[role="main"]')
-                   || document.querySelector('main')
-                   || document.body;
+        let article = document.querySelector('article') || document.querySelector('main') || document.body;
         const clone = article.cloneNode(true);
-        clone.querySelectorAll('script, style, nav, header, footer, aside, iframe, noscript, .ad, .ads, [class*="ad-"], [class*="sidebar"], [class*="comment"], [class*="share"], button, form').forEach(el => el.remove());
+        clone.querySelectorAll('script, style, nav, header, footer, aside, iframe, noscript, button, form').forEach(el => el.remove());
         const blocks = [];
         clone.querySelectorAll('h1, h2, h3, h4, p, blockquote, ul, ol, pre, img').forEach(el => {
           if (el.tagName === 'IMG') {
-            const src = el.src || el.dataset.src;
+            const src = el.src;
             if (src && src.startsWith('http')) blocks.push({ type: 'img', src, alt: el.alt || '' });
           } else {
             const text = el.innerText.trim();
@@ -616,14 +449,23 @@ ipcMain.handle('extract-article', async (e) => {
   }
 });
 
-// ═══════════════════════════════════════════════
-//   APP LIFECYCLE
-// ═══════════════════════════════════════════════
+ipcMain.on('open-external', (e, url) => {
+  if (url && /^https?:\/\//i.test(url)) shell.openExternal(url);
+});
+
+ipcMain.on('open-downloaded-file', (e, p) => {
+  if (p && fs.existsSync(p)) shell.openPath(p);
+});
+
+ipcMain.on('show-in-folder', (e, p) => {
+  if (p && fs.existsSync(p)) shell.showItemInFolder(p);
+});
+
+// ═══ LIFECYCLE ═══
 app.whenReady().then(() => {
   app.setName('Universal Browser');
 
   applyAdBlockToSession(session.defaultSession);
-  attachDownloadHandler(session.defaultSession);
   session.defaultSession.setUserAgent(
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
     '(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
@@ -631,7 +473,6 @@ app.whenReady().then(() => {
 
   const wvSession = session.fromPartition('persist:browser');
   applyAdBlockToSession(wvSession);
-  attachDownloadHandler(wvSession);
   wvSession.setUserAgent(
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
     '(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'

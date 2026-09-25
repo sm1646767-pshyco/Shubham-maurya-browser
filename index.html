@@ -2,132 +2,209 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Universal Browser</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="app">
 
-    <!-- ════════ SIDEBAR ════════ -->
+  <!-- ═══════════════════════════════════════════════════════════════
+       MAIN APP CONTAINER
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="app" id="app">
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SIDEBAR
+         ═══════════════════════════════════════════════════════════════ -->
     <aside class="sidebar" id="sidebar">
+      
       <div class="sidebar-top">
         <div class="brand">
-          <span class="brand-icon">SM</span>
-          <span class="brand-name">Shubham Maurya</span>
+          <span class="brand-icon">UB</span>
+          <span class="brand-name">Universal</span>
         </div>
-        <button class="icon-btn" id="collapseSidebar" title="Collapse (Ctrl+B)">◀</button>
+        <button class="icon-btn" id="collapseSidebar" title="Collapse Sidebar (Ctrl+B)">◀</button>
       </div>
 
       <button class="new-tab-side" id="newTabBtn" title="New Tab (Ctrl+T)">
-        <span>＋</span> New Tab
+        <span class="new-tab-icon">＋</span>
+        <span>New Tab</span>
       </button>
 
       <div class="sidebar-section">
-        <input type="text" class="tab-search" id="tabSearch" placeholder="🔍 Search tabs..." />
+        <input type="text" class="tab-search" id="tabSearch" placeholder="🔍 Search tabs..." autocomplete="off" />
       </div>
 
       <div class="tabs-list" id="tabsList"></div>
 
       <div class="sidebar-bottom">
-        <button class="side-btn" id="bookmarksBtn"><span>⭐</span> Bookmarks</button>
-        <button class="side-btn" id="historyBtn"><span>🕐</span> History</button>
-        <button class="side-btn" id="downloadsBtn"><span>⬇️</span> Downloads</button>
-        <button class="side-btn" id="passwordsBtn"><span>🔐</span> Passwords</button>
-        <button class="side-btn" id="statsBtn"><span>📊</span> Statistics</button>
-        <button class="side-btn" id="settingsBtn"><span>⚙️</span> Settings</button>
+        <button class="side-btn" id="bookmarksBtn"><span class="side-icon">⭐</span><span>Bookmarks</span></button>
+        <button class="side-btn" id="historyBtn"><span class="side-icon">🕐</span><span>History</span></button>
+        <button class="side-btn" id="passwordsBtn"><span class="side-icon">🔐</span><span>Passwords</span></button>
+        <button class="side-btn" id="downloadsBtn"><span class="side-icon">⬇️</span><span>Downloads</span></button>
+        <button class="side-btn" id="statsBtn"><span class="side-icon">📊</span><span>Statistics</span></button>
+        <button class="side-btn" id="notesBtn"><span class="side-icon">📝</span><span>Notes</span></button>
+        <button class="side-btn" id="settingsBtn"><span class="side-icon">⚙️</span><span>Settings</span></button>
       </div>
     </aside>
 
-    <!-- ════════ MAIN ════════ -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         MAIN AREA
+         ═══════════════════════════════════════════════════════════════ -->
     <main class="main">
-      <div class="toolbar">
+
+      <!-- ═══ TOOLBAR ═══ -->
+      <div class="toolbar" id="toolbar">
         <button class="icon-btn" id="expandSidebar" title="Show Sidebar" style="display:none;">▶</button>
-        <button class="icon-btn" id="backBtn" title="Back (Alt+←)">◀</button>
-        <button class="icon-btn" id="forwardBtn" title="Forward (Alt+→)">▶</button>
+        <button class="icon-btn" id="backBtn" title="Back (Alt+←)" disabled>◀</button>
+        <button class="icon-btn" id="forwardBtn" title="Forward (Alt+→)" disabled>▶</button>
         <button class="icon-btn" id="reloadBtn" title="Reload (Ctrl+R)">⟳</button>
         <button class="icon-btn" id="homeBtn" title="Home">⌂</button>
 
-        <div class="url-bar">
-          <span class="lock-icon" id="lockIcon">🔒</span>
-          <input type="text" id="urlInput" placeholder="Search or enter URL (Ctrl+L)" spellcheck="false" />
+        <div class="url-bar" id="urlBar">
+          <span class="lock-icon" id="lockIcon" title="Secure connection">🔒</span>
+          <input type="text" id="urlInput" placeholder="Search or enter URL (Ctrl+L)" spellcheck="false" autocomplete="off" />
           <button class="icon-btn small" id="bookmarkStar" title="Bookmark (Ctrl+D)">☆</button>
-          <button class="go-btn" id="goBtn">Go</button>
+          <button class="go-btn" id="goBtn" title="Go">Go</button>
         </div>
 
-        <div class="shield" id="shield" title="Ads blocked">
-          🛡️ <span id="blockedCount">0</span>
+        <div class="shield" id="shield" title="Ads blocked — click to reset">
+          <span class="shield-icon">🛡️</span>
+          <span id="blockedCount">0</span>
         </div>
 
+        <button class="icon-btn" id="torBtn" title="Toggle Tor (Dark Web)">🧅</button>
         <button class="icon-btn" id="zoomOutBtn" title="Zoom Out">−</button>
         <span class="zoom-label" id="zoomLabel">100%</span>
         <button class="icon-btn" id="zoomInBtn" title="Zoom In">＋</button>
+
         <button class="icon-btn" id="incognitoBtn" title="Incognito">🕶️</button>
         <button class="icon-btn" id="readingBtn" title="Reading Mode">📖</button>
         <button class="icon-btn" id="screenshotBtn" title="Screenshot">📸</button>
         <button class="icon-btn" id="pipBtn" title="Picture-in-Picture">🎬</button>
         <button class="icon-btn" id="fullscreenBtn" title="Fullscreen (F11)">⛶</button>
         <button class="icon-btn" id="cmdBtn" title="Command Palette (Ctrl+K)">⌘</button>
+        <button class="icon-btn" id="splitBtn" title="Split Screen">⚏</button>
         <button class="icon-btn" id="menuBtn" title="Menu">☰</button>
       </div>
 
+      <!-- ═══ BOOKMARKS BAR ═══ -->
       <div class="bookmarks-bar" id="bookmarksBar">
         <div class="bm-items" id="bmItems"></div>
-        <button class="icon-btn small" id="addBookmarkBtn" title="Bookmark (Ctrl+D)">＋</button>
+        <button class="icon-btn small" id="addBookmarkBtn" title="Bookmark Current (Ctrl+D)">＋</button>
       </div>
 
-      <!-- ════════ CONTENT AREA (Webviews) ════════ -->
+      <!-- ═══ CONTENT AREA (Webviews inserted here) ═══ -->
       <div class="content" id="content"></div>
 
-      <!-- ════════ START PAGE ════════ -->
+      <!-- ═══ START PAGE ═══ -->
       <div class="start-page" id="startPage">
-        <div class="logo-badge"><span class="logo-text">UB</span></div>
-        <h1>Universal</h1>
-        <p class="subtitle">Browser</p>
-        <p class="tagline">Ad-free · Fast · Private · Crafted with ❤️ by Shubham Maurya</p>
-
-        <div class="search-box">
-          <input type="text" id="startSearch" placeholder="Search or enter URL..." autofocus />
+        <div class="logo-badge">
+          <span class="logo-text">UB</span>
         </div>
 
-        <div class="shortcuts">
-          <div class="shortcut" data-url="https://www.google.com"><div class="sc-icon">🔍</div><span>Google</span></div>
-          <div class="shortcut" data-url="https://www.youtube.com"><div class="sc-icon">▶️</div><span>YouTube</span></div>
-          <div class="shortcut" data-url="https://chatgpt.com"><div class="sc-icon">🤖</div><span>ChatGPT</span></div>
-          <div class="shortcut" data-url="https://github.com"><div class="sc-icon">🐙</div><span>GitHub</span></div>
-          <div class="shortcut" data-url="https://www.wikipedia.org"><div class="sc-icon">📖</div><span>Wikipedia</span></div>
-          <div class="shortcut" data-url="https://www.reddit.com"><div class="sc-icon">👽</div><span>Reddit</span></div>
-          <div class="shortcut" data-url="https://stackoverflow.com"><div class="sc-icon">💻</div><span>StackOverflow</span></div>
-          <div class="shortcut" data-url="https://claude.ai"><div class="sc-icon">🧠</div><span>Claude</span></div>
+        <h1 class="start-title">Universal</h1>
+        <p class="subtitle">BROWSER</p>
+        <p class="tagline">Ad-free · Fast · Private · Tor-Ready · by Shubham Maurya</p>
+
+        <div class="search-box">
+          <input type="text" id="startSearch" placeholder="Search the web or enter URL..." autofocus autocomplete="off" />
+          <div class="search-engines" id="searchEngines">
+            <button class="se-btn active" data-engine="google" title="Google">🔍</button>
+            <button class="se-btn" data-engine="duckduckgo" title="DuckDuckGo">🦆</button>
+            <button class="se-btn" data-engine="brave" title="Brave">🦁</button>
+            <button class="se-btn" data-engine="bing" title="Bing">🅱️</button>
+            <button class="se-btn" data-engine="chatgpt" title="ChatGPT">🤖</button>
+          </div>
+        </div>
+
+        <div class="shortcuts" id="shortcuts">
+          <div class="shortcut" data-url="https://www.google.com">
+            <div class="sc-icon">🔍</div><span>Google</span>
+          </div>
+          <div class="shortcut" data-url="https://www.youtube.com">
+            <div class="sc-icon">▶️</div><span>YouTube</span>
+          </div>
+          <div class="shortcut" data-url="https://chatgpt.com">
+            <div class="sc-icon">🤖</div><span>ChatGPT</span>
+          </div>
+          <div class="shortcut" data-url="https://github.com">
+            <div class="sc-icon">🐙</div><span>GitHub</span>
+          </div>
+          <div class="shortcut" data-url="https://www.wikipedia.org">
+            <div class="sc-icon">📖</div><span>Wikipedia</span>
+          </div>
+          <div class="shortcut" data-url="https://www.reddit.com">
+            <div class="sc-icon">👽</div><span>Reddit</span>
+          </div>
+          <div class="shortcut" data-url="https://stackoverflow.com">
+            <div class="sc-icon">💻</div><span>StackOverflow</span>
+          </div>
+          <div class="shortcut" data-url="https://claude.ai">
+            <div class="sc-icon">🧠</div><span>Claude</span>
+          </div>
+          <div class="shortcut" data-url="https://mail.google.com">
+            <div class="sc-icon">📧</div><span>Gmail</span>
+          </div>
+          <div class="shortcut" data-url="https://www.instagram.com">
+            <div class="sc-icon">📷</div><span>Instagram</span>
+          </div>
+          <div class="shortcut" data-url="https://twitter.com">
+            <div class="sc-icon">🐦</div><span>Twitter</span>
+          </div>
+          <div class="shortcut" data-url="https://www.linkedin.com">
+            <div class="sc-icon">💼</div><span>LinkedIn</span>
+          </div>
         </div>
 
         <div class="footer-credit">
-          <span>v3.0.0</span> · <span>Made by <b>Shubham Maurya</b></span> · <span>© 2026</span>
+          <span class="credit-item">v5.0.0</span>
+          <span class="credit-dot">·</span>
+          <span class="credit-item">Made by <b>Shubham Maurya</b></span>
+          <span class="credit-dot">·</span>
+          <span class="credit-item">© 2026</span>
         </div>
       </div>
 
-      <!-- ════════ READING MODE ════════ -->
+      <!-- ═══ READING MODE ═══ -->
       <div class="reader-overlay" id="readerOverlay">
         <div class="reader-header">
-          <button class="reader-close" id="readerCloseBtn" title="Close">✕</button>
-          <button class="reader-btn" id="readerThemeBtn" title="Toggle theme">🌓</button>
+          <button class="reader-close" id="readerCloseBtn" title="Close (ESC)">✕</button>
+          <button class="reader-btn" id="readerThemeBtn" title="Toggle Theme">🌓</button>
+          <button class="reader-btn" id="readerFontIncrease" title="Increase Font">A+</button>
+          <button class="reader-btn" id="readerFontDecrease" title="Decrease Font">A-</button>
         </div>
         <article class="reader-content" id="readerContent"></article>
       </div>
 
+      <!-- ═══ SPLIT SCREEN ═══ -->
+      <div class="split-container" id="splitContainer" style="display:none;">
+        <div class="split-pane" id="splitPaneLeft"></div>
+        <div class="split-divider" id="splitDivider"></div>
+        <div class="split-pane" id="splitPaneRight"></div>
+      </div>
     </main>
 
-    <!-- ════════ SIDE PANEL ════════ -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         SIDE PANEL
+         ═══════════════════════════════════════════════════════════════ -->
     <aside class="panel" id="panel">
       <div class="panel-header">
         <h2 id="panelTitle">Bookmarks</h2>
-        <button class="icon-btn" id="panelClose">✕</button>
+        <div class="panel-header-actions">
+          <button class="icon-btn small" id="panelRefresh" title="Refresh">⟳</button>
+          <button class="icon-btn small" id="panelClose" title="Close">✕</button>
+        </div>
       </div>
       <div class="panel-body" id="panelBody"></div>
     </aside>
 
   </div>
 
-  <!-- ════════ COMMAND PALETTE ════════ -->
+  <!-- ═══════════════════════════════════════════════════════════════
+       COMMAND PALETTE (Ctrl+K)
+       ═══════════════════════════════════════════════════════════════ -->
   <div class="cmd-overlay" id="cmdOverlay">
     <div class="cmd-box">
       <div class="cmd-input-wrap">
@@ -136,10 +213,17 @@
         <span class="cmd-hint">ESC</span>
       </div>
       <div class="cmd-results" id="cmdResults"></div>
+      <div class="cmd-footer">
+        <span class="cmd-footer-item">↑↓ Navigate</span>
+        <span class="cmd-footer-item">↵ Select</span>
+        <span class="cmd-footer-item">ESC Close</span>
+      </div>
     </div>
   </div>
 
-  <!-- ════════ FIND IN PAGE ════════ -->
+  <!-- ═══════════════════════════════════════════════════════════════
+       FIND IN PAGE (Ctrl+F)
+       ═══════════════════════════════════════════════════════════════ -->
   <div class="find-overlay" id="findOverlay">
     <div class="find-box">
       <input type="text" id="findInput" placeholder="Find in page..." autocomplete="off" />
@@ -150,12 +234,60 @@
     </div>
   </div>
 
-  <!-- ════════ TOASTS ════════ -->
+  <!-- ═══════════════════════════════════════════════════════════════
+       TOASTS
+       ═══════════════════════════════════════════════════════════════ -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- ════════ CONTEXT MENU ════════ -->
-  <div class="context-menu" id="contextMenu"></div>
+  <!-- ═══════════════════════════════════════════════════════════════
+       TOR INDICATOR
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="tor-indicator" id="torIndicator" style="display:none;">
+    <span class="tor-indicator-icon">🧅</span>
+    <span class="tor-indicator-text">TOR ACTIVE</span>
+  </div>
 
+  <!-- ═══════════════════════════════════════════════════════════════
+       DOWNLOADS FLOAT
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="downloads-float" id="downloadsFloat" style="display:none;">
+    <div class="downloads-float-header">
+      <span class="downloads-float-icon">⬇️</span>
+      <span class="downloads-float-title">Downloads</span>
+      <button class="icon-btn small" id="downloadsFloatClose">✕</button>
+    </div>
+    <div class="downloads-float-body" id="downloadsFloatBody"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SUGGESTIONS POPUP
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="suggestions-popup" id="suggestionsPopup" style="display:none;">
+    <div class="suggestions-list" id="suggestionsList"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       AI CHAT SIDEBAR
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="ai-chat-overlay" id="aiChatOverlay" style="display:none;">
+    <div class="ai-chat-header">
+      <span class="ai-chat-icon">🤖</span>
+      <span class="ai-chat-title">AI Assistant</span>
+      <button class="icon-btn small" id="aiChatClose">✕</button>
+    </div>
+    <div class="ai-chat-body" id="aiChatBody"></div>
+    <div class="ai-chat-input-wrap">
+      <input type="text" id="aiChatInput" placeholder="Ask AI anything..." autocomplete="off" />
+      <button class="ai-chat-send" id="aiChatSend">→</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SCRIPTS — LOAD ORDER IMPORTANT HAI
+       blocklist → search-engine → renderer
+       ═══════════════════════════════════════════════════════════════ -->
+  <script src="blocklist.js"></script>
+  <script src="search-engine.js"></script>
   <script src="renderer.js"></script>
 </body>
 </html>

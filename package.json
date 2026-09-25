@@ -1,33 +1,44 @@
 {
   "name": "universal-browser",
-  "version": "3.1.0",
-  "description": "Universal Browser — Ad-free, fast, private browser by Shubham Maurya",
+  "version": "5.0.0",
+  "description": "Universal Browser — Ad-free, Tor-enabled, privacy-first universal browser by Shubham Maurya",
   "main": "main.js",
   "author": "Shubham Maurya",
   "license": "MIT",
-  "homepage": "https://github.com/sm1646767-pshyco/Shubham-maurya-browser",
+  "homepage": "https://sm1646767-pshyco.github.io/Shubham-maurya-browser/",
   "repository": {
     "type": "git",
     "url": "https://github.com/sm1646767-pshyco/Shubham-maurya-browser.git"
   },
+  "keywords": [
+    "browser",
+    "electron",
+    "ad-blocker",
+    "tor",
+    "privacy",
+    "universal"
+  ],
   "scripts": {
     "start": "electron .",
     "start:debug": "electron . 2>&1",
     "build": "electron-builder --publish never",
     "build:mac": "electron-builder --mac --publish never",
     "build:win": "electron-builder --win --publish never",
-    "build:linux": "electron-builder --linux --publish never"
+    "build:linux": "electron-builder --linux --publish never",
+    "clean": "rm -rf dist node_modules/.cache",
+    "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
     "electron": "^31.0.0",
     "electron-builder": "^24.13.3"
   },
   "build": {
-    "appId": "com.shubhammaurya.browser",
+    "appId": "com.shubhammaurya.universal",
     "productName": "Universal Browser",
     "copyright": "Copyright © 2026 Shubham Maurya",
     "directories": {
-      "output": "dist"
+      "output": "dist",
+      "buildResources": "assets"
     },
     "files": [
       "main.js",
@@ -35,18 +46,25 @@
       "index.html",
       "renderer.js",
       "styles.css",
+      "search-engine.js",
+      "blocklist.js",
       "package.json"
     ],
+    "extraMetadata": {
+      "main": "main.js"
+    },
     "mac": {
       "target": [
         { "target": "dmg", "arch": ["arm64", "x64"] },
         { "target": "zip", "arch": ["arm64", "x64"] }
       ],
-      "category": "public.app-category.productivity"
+      "category": "public.app-category.productivity",
+      "darkModeSupport": true
     },
     "win": {
       "target": [
-        { "target": "nsis", "arch": ["x64"] }
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
       ]
     },
     "linux": {
@@ -62,6 +80,13 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Universal Browser"
+    },
+    "dmg": {
+      "title": "Universal Browser",
+      "contents": [
+        { "x": 130, "y": 220 },
+        { "x": 410, "y": 220, "type": "link", "path": "/Applications" }
+      ]
     }
   }
 }
