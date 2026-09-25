@@ -60,12 +60,7 @@
       "entitlements": "entitlements.mac.plist",
       "entitlementsInherit": "entitlements.mac.plist",
       "identity": null,
-      "darkModeSupport": true,
-      "extendInfo": {
-        "LSUIElement": false,
-        "NSHighResolutionCapable": true,
-        "NSRequiresAquaSystemAppearance": false
-      }
+      "darkModeSupport": true
     },
     "dmg": {
       "title": "Universal Browser",
@@ -91,17 +86,14 @@
             "x64"
           ]
         }
-      ],
-      "publisherName": "Shubham Maurya"
+      ]
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Universal Browser",
-      "installerIcon": "build/icon.ico",
-      "uninstallerIcon": "build/icon.ico"
+      "shortcutName": "Universal Browser"
     },
     "linux": {
       "target": [
@@ -120,5 +112,10 @@
       ],
       "category": "Network"
     }
+  },
+  "dependencies": {
+    "dotenv": "^18.0.4",
+    "node-fetch": "^3.3.2",
+    "openai": "^7.23.0"
   }
 }

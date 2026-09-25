@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Universal Browser v5.0</title>
+  <title>Universal Browser</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -20,6 +20,28 @@
 
       <button class="new-tab-side" id="newTabBtn" title="New Tab (Ctrl+T)">
         <span>＋</span> New Tab
+        <!-- Sidebar me add karo -->
+<button class="side-btn ai-btn" id="aiBtn">
+  <span>🤖</span> AI Assistant
+</button>
+
+<!-- Main ke baad -->
+<aside class="ai-panel" id="aiPanel">
+  <div class="ai-panel-header">
+    <div class="ai-panel-title">
+      <span class="ai-icon">🤖</span>
+      <h2>AI Assistant</h2>
+    </div>
+    <button class="icon-btn" id="aiPanelClose">✕</button>
+  </div>
+  <div class="ai-panel-body">
+    <div class="ai-chat" id="aiChat"></div>
+  </div>
+  <div class="ai-panel-footer">
+    <input type="text" id="aiInput" placeholder="Ask AI anything..." />
+    <button class="ai-send-btn" id="aiSendBtn">→</button>
+  </div>
+</aside>
       </button>
 
       <div class="sidebar-section">
@@ -77,7 +99,7 @@
 
       <div class="content" id="content"></div>
 
-      <!-- ════════ START PAGE ════════ -->
+      <!-- START PAGE -->
       <div class="start-page" id="startPage">
         <div class="logo-badge"><span class="logo-text">UB</span></div>
         <h1>Universal</h1>
@@ -104,7 +126,7 @@
         </div>
       </div>
 
-      <!-- ════════ READING MODE ════════ -->
+      <!-- READING MODE -->
       <div class="reader-overlay" id="readerOverlay">
         <div class="reader-header">
           <button class="reader-close" id="readerCloseBtn" title="Close">✕</button>

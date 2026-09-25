@@ -24,3 +24,5 @@ Thumbs.db
 .cache/
 tmp/
 temp/
+echo ".env" >> .gitignore
+echo "node_modules/" >> .gitignore
