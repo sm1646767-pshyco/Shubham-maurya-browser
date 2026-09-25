@@ -3,25 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
-  <meta name="description" content="Universal Browser — Ad-free, fast, private browser by Shubham Maurya. Available for Mac, Windows, Android, and iOS." />
-  <meta name="keywords" content="universal browser, ad-free browser, adblock, shubham maurya, mac browser, windows browser, android browser" />
+  <meta name="description" content="Universal Browser — Ad-free, fast, private browser by Shubham Maurya. Available for Mac, Windows, and mobile." />
+  <meta name="keywords" content="universal browser, ad-free browser, adblock, shubham maurya, mac browser, windows browser" />
   <meta name="author" content="Shubham Maurya" />
   <meta name="theme-color" content="#89b4fa" />
 
-  <!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
   <meta property="og:title" content="Universal Browser — Ad-free, Fast, Private" />
   <meta property="og:description" content="Ad-free universal browser by Shubham Maurya. Block ads on YouTube, Google, and every website." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://sm1646767-pshyco.github.io/Shubham-maurya-browser/" />
   <meta property="og:image" content="icon-512.png" />
-
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Universal Browser — Ad-free, Fast, Private" />
   <meta name="twitter:description" content="Ad-free universal browser by Shubham Maurya." />
   <meta name="twitter:image" content="icon-512.png" />
 
-  <!-- PWA Support -->
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -32,18 +28,8 @@
   <title>Universal Browser — Ad-free, Fast, Private by Shubham Maurya</title>
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      -webkit-text-size-adjust: 100%;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       background: linear-gradient(135deg, #1e1e2e 0%, #181825 100%);
@@ -57,145 +43,77 @@
       overflow-x: hidden;
     }
 
-    /* ════════ HERO SECTION ════════ */
-    .hero {
-      max-width: 900px;
-      width: 100%;
-      text-align: center;
-      padding: 40px 16px 20px;
-    }
-
+    /* HERO */
+    .hero { max-width: 900px; width: 100%; text-align: center; padding: 40px 16px 20px; }
     .logo {
-      width: 100px;
-      height: 100px;
+      width: 100px; height: 100px;
       background: linear-gradient(135deg, #89b4fa, #cba6f7);
       border-radius: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 42px;
-      font-weight: 900;
-      color: #11111b;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 42px; font-weight: 900; color: #11111b;
       margin: 0 auto 24px;
       box-shadow: 0 20px 60px rgba(137, 180, 250, 0.4);
       animation: float 4s ease-in-out infinite;
       letter-spacing: -2px;
     }
-
     @keyframes float {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-8px); }
     }
-
     h1 {
-      font-size: 48px;
-      font-weight: 800;
-      margin-bottom: 12px;
+      font-size: 48px; font-weight: 800; margin-bottom: 12px;
       background: linear-gradient(90deg, #89b4fa 0%, #cba6f7 50%, #f38ba8 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
+      -webkit-background-clip: text; background-clip: text;
       -webkit-text-fill-color: transparent;
-      line-height: 1.1;
-      letter-spacing: -1px;
+      line-height: 1.1; letter-spacing: -1px;
     }
-
-    .subtitle {
-      font-size: 18px;
-      color: #a6adc8;
-      margin-bottom: 8px;
-      line-height: 1.5;
-    }
-
-    .author {
-      font-size: 14px;
-      color: #6c7086;
-      margin-bottom: 32px;
-    }
-
+    .subtitle { font-size: 18px; color: #a6adc8; margin-bottom: 8px; line-height: 1.5; }
+    .author { font-size: 14px; color: #6c7086; margin-bottom: 32px; }
     .author b {
       background: linear-gradient(90deg, #89b4fa, #cba6f7);
-      -webkit-background-clip: text;
-      background-clip: text;
+      -webkit-background-clip: text; background-clip: text;
       -webkit-text-fill-color: transparent;
       font-weight: 700;
     }
 
-    /* ════════ CTA BUTTONS ════════ */
+    /* BUTTONS */
     .cta-buttons {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 40px;
+      display: flex; gap: 12px; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 40px;
     }
-
     .btn {
-      padding: 14px 28px;
-      border-radius: 12px;
-      font-size: 15px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border: none;
-      cursor: pointer;
-      white-space: nowrap;
-      min-height: 48px;
+      padding: 14px 28px; border-radius: 12px;
+      font-size: 15px; font-weight: 600;
+      text-decoration: none; transition: all 0.2s;
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 8px; border: none; cursor: pointer;
+      white-space: nowrap; min-height: 48px;
       font-family: inherit;
     }
-
     .btn-primary {
       background: linear-gradient(135deg, #89b4fa, #cba6f7);
       color: #11111b;
       box-shadow: 0 8px 24px rgba(137, 180, 250, 0.4);
     }
-
     .btn-primary:hover, .btn-primary:active {
       transform: translateY(-2px);
       box-shadow: 0 12px 32px rgba(137, 180, 250, 0.6);
     }
-
     .btn-secondary {
-      background: #313244;
-      color: #cdd6f4;
+      background: #313244; color: #cdd6f4;
       border: 1px solid #45475a;
     }
+    .btn-secondary:hover, .btn-secondary:active { background: #45475a; }
 
-    .btn-secondary:hover, .btn-secondary:active {
-      background: #45475a;
-    }
-
-    /* ════════ DOWNLOAD SECTION ════════ */
-    .download-section {
-      max-width: 900px;
-      width: 100%;
-      margin-bottom: 60px;
-    }
-
-    .section-title {
-      font-size: 24px;
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 8px;
-      color: #cdd6f4;
-    }
-
-    .section-subtitle {
-      text-align: center;
-      color: #a6adc8;
-      font-size: 14px;
-      margin-bottom: 28px;
-    }
-
+    /* DOWNLOAD */
+    .download-section { max-width: 900px; width: 100%; margin-bottom: 60px; }
+    .section-title { font-size: 24px; font-weight: 700; text-align: center; margin-bottom: 8px; color: #cdd6f4; }
+    .section-subtitle { text-align: center; color: #a6adc8; font-size: 14px; margin-bottom: 28px; }
     .download-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 16px;
     }
-
     .download-card {
       background: #313244;
       border: 1px solid #45475a;
@@ -207,52 +125,95 @@
       transition: all 0.2s;
       display: block;
     }
-
     .download-card:hover, .download-card:active {
       transform: translateY(-4px);
       border-color: #89b4fa;
       box-shadow: 0 12px 32px rgba(137, 180, 250, 0.2);
     }
-
-    .download-card .os-icon {
-      font-size: 40px;
-      margin-bottom: 12px;
-      display: block;
-    }
-
-    .download-card .os-name {
-      font-size: 17px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .download-card .os-info {
-      font-size: 12px;
-      color: #a6adc8;
-      margin-bottom: 12px;
-    }
-
+    .download-card .os-icon { font-size: 40px; margin-bottom: 12px; display: block; }
+    .download-card .os-name { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .download-card .os-info { font-size: 12px; color: #a6adc8; margin-bottom: 12px; }
     .download-card .os-size {
-      font-size: 11px;
-      color: #6c7086;
-      padding: 4px 10px;
-      background: #1e1e2e;
-      border-radius: 20px;
-      display: inline-block;
+      font-size: 11px; color: #6c7086;
+      padding: 4px 10px; background: #1e1e2e;
+      border-radius: 20px; display: inline-block;
     }
-
     .download-card .os-badge {
-      font-size: 10px;
-      color: #a6e3a1;
+      font-size: 10px; color: #a6e3a1;
       padding: 2px 8px;
       background: rgba(166, 227, 161, 0.15);
       border-radius: 20px;
       display: inline-block;
-      margin-top: 8px;
-      font-weight: 600;
+      margin-top: 8px; font-weight: 600;
     }
 
-    /* ════════ MOBILE PWA SECTION ════════ */
+    /* INSTALL INSTRUCTIONS */
+    .install-instructions {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto 60px;
+      padding: 24px;
+      background: rgba(249, 226, 175, 0.08);
+      border: 1px solid rgba(249, 226, 175, 0.3);
+      border-radius: 16px;
+    }
+    .install-instructions h3 {
+      font-size: 18px;
+      color: #f9e2af;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .install-instructions > p {
+      color: #a6adc8;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .install-option {
+      background: #1e1e2e;
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #313244;
+    }
+    .install-option:last-child { margin-bottom: 0; }
+    .install-option-title {
+      font-size: 12px;
+      color: #89b4fa;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .install-option code {
+      display: block;
+      background: #181825;
+      padding: 12px;
+      border-radius: 6px;
+      color: #a6e3a1;
+      font-size: 12px;
+      overflow-x: auto;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+      border: 1px solid #313244;
+    }
+    .install-option ol {
+      font-size: 13px;
+      color: #cdd6f4;
+      line-height: 1.8;
+      padding-left: 20px;
+    }
+    .install-option ol li { margin-bottom: 4px; }
+    .install-option ol strong { color: #89b4fa; }
+    .install-option ol code {
+      display: inline-block;
+      padding: 2px 6px;
+      margin: 0 2px;
+      font-size: 11px;
+    }
+
+    /* MOBILE */
     .mobile-section {
       max-width: 900px;
       width: 100%;
@@ -263,27 +224,9 @@
       border-radius: 20px;
       text-align: center;
     }
-
-    .mobile-section .mobile-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
-      display: block;
-    }
-
-    .mobile-section h2 {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 12px;
-      color: #cdd6f4;
-    }
-
-    .mobile-section p {
-      color: #a6adc8;
-      font-size: 14px;
-      margin-bottom: 20px;
-      line-height: 1.6;
-    }
-
+    .mobile-section .mobile-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+    .mobile-section h2 { font-size: 22px; font-weight: 700; margin-bottom: 12px; color: #cdd6f4; }
+    .mobile-section p { color: #a6adc8; font-size: 14px; margin-bottom: 20px; line-height: 1.6; }
     .mobile-steps {
       display: flex;
       flex-direction: column;
@@ -292,7 +235,6 @@
       margin: 0 auto 20px;
       text-align: left;
     }
-
     .mobile-step {
       background: #1e1e2e;
       padding: 12px 16px;
@@ -303,17 +245,10 @@
       align-items: center;
       gap: 12px;
     }
+    .mobile-step .step-icon { font-size: 20px; flex-shrink: 0; }
+    .mobile-step strong { color: #89b4fa; }
 
-    .mobile-step .step-icon {
-      font-size: 20px;
-      flex-shrink: 0;
-    }
-
-    .mobile-step strong {
-      color: #89b4fa;
-    }
-
-    /* ════════ FEATURES ════════ */
+    /* FEATURES */
     .features {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -322,7 +257,6 @@
       width: 100%;
       margin-bottom: 60px;
     }
-
     .feature {
       background: #313244;
       padding: 24px 20px;
@@ -331,32 +265,12 @@
       border: 1px solid #45475a;
       transition: all 0.2s;
     }
+    .feature:hover { transform: translateY(-4px); border-color: #89b4fa; }
+    .feature-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+    .feature h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: #cdd6f4; }
+    .feature p { font-size: 13px; color: #a6adc8; line-height: 1.6; }
 
-    .feature:hover {
-      transform: translateY(-4px);
-      border-color: #89b4fa;
-    }
-
-    .feature-icon {
-      font-size: 28px;
-      margin-bottom: 10px;
-      display: block;
-    }
-
-    .feature h3 {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #cdd6f4;
-    }
-
-    .feature p {
-      font-size: 13px;
-      color: #a6adc8;
-      line-height: 1.6;
-    }
-
-    /* ════════ FOOTER ════════ */
+    /* FOOTER */
     .footer {
       text-align: center;
       color: #6c7086;
@@ -366,40 +280,21 @@
       width: 100%;
       max-width: 900px;
     }
+    .footer a { color: #89b4fa; text-decoration: none; font-weight: 600; }
+    .footer a:hover { text-decoration: underline; }
+    .footer .social-links { display: flex; gap: 16px; justify-content: center; margin-bottom: 16px; }
+    .footer .social-links a { font-size: 20px; color: #a6adc8; }
+    .footer .social-links a:hover { color: #89b4fa; }
 
-    .footer a {
-      color: #89b4fa;
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .footer a:hover {
-      text-decoration: underline;
-    }
-
-    .footer .social-links {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      margin-bottom: 16px;
-    }
-
-    .footer .social-links a {
-      font-size: 20px;
-      color: #a6adc8;
-    }
-
-    .footer .social-links a:hover {
-      color: #89b4fa;
-    }
-
-    /* ════════ RESPONSIVE — MOBILE FIRST ════════ */
+    /* RESPONSIVE */
     @media (max-width: 768px) {
       h1 { font-size: 36px; }
       .subtitle { font-size: 16px; }
       .logo { width: 80px; height: 80px; font-size: 34px; }
       .section-title { font-size: 20px; }
       .mobile-section h2 { font-size: 18px; }
+      .install-instructions { padding: 20px 16px; }
+      .install-instructions h3 { font-size: 16px; }
     }
 
     @media (max-width: 480px) {
@@ -412,42 +307,18 @@
       .features { grid-template-columns: 1fr; }
       .download-grid { grid-template-columns: 1fr; }
       .mobile-step { font-size: 12px; padding: 10px 12px; }
+      .install-option ol { font-size: 12px; }
     }
 
-    /* ════════ iOS SPECIFIC ════════ */
-    @supports (-webkit-touch-callout: none) {
-      .btn {
-        -webkit-appearance: none;
-        appearance: none;
-      }
-    }
-
-    /* ════════ ANDROID SPECIFIC ════════ */
-    @media (prefers-color-scheme: dark) {
-      body { background: linear-gradient(135deg, #1e1e2e 0%, #181825 100%); }
-    }
-
-    /* ════════ TABLET ════════ */
-    @media (min-width: 769px) and (max-width: 1024px) {
-      h1 { font-size: 42px; }
-    }
-
-    /* ════════ ACCESSIBILITY ════════ */
     @media (prefers-reduced-motion: reduce) {
       .logo { animation: none; }
       * { transition: none !important; }
-    }
-
-    /* ════════ PRINT ════════ */
-    @media print {
-      body { background: white; color: black; }
-      .btn, .mobile-section { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ════════ HERO ════════ -->
+  <!-- HERO -->
   <div class="hero">
     <div class="logo">UB</div>
     <h1>Universal Browser</h1>
@@ -458,7 +329,7 @@
     <p class="author">Crafted with ❤️ by <b>Shubham Maurya</b></p>
   </div>
 
-  <!-- ════════ QUICK CTA ════════ -->
+  <!-- QUICK CTA -->
   <div class="cta-buttons">
     <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/latest" class="btn btn-primary">
       📥 Download Now
@@ -468,14 +339,14 @@
     </a>
   </div>
 
-  <!-- ════════ DOWNLOAD SECTION ════════ -->
+  <!-- DOWNLOAD SECTION -->
   <div class="download-section">
     <h2 class="section-title">📥 Download for Your Platform</h2>
     <p class="section-subtitle">Free · Open Source · No Sign-up Required</p>
 
     <div class="download-grid">
       <!-- Mac Apple Silicon -->
-      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/latest/download/ShubhamMauryaBrowser-1.0.0-arm64.dmg" class="download-card">
+      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/latest" class="download-card">
         <span class="os-icon">🍎</span>
         <div class="os-name">Mac</div>
         <div class="os-info">Apple Silicon (M1/M2/M3)</div>
@@ -484,7 +355,7 @@
       </a>
 
       <!-- Mac Intel -->
-      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/latest/download/ShubhamMauryaBrowser-1.0.0.dmg" class="download-card">
+      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/latest" class="download-card">
         <span class="os-icon">💻</span>
         <div class="os-name">Mac</div>
         <div class="os-info">Intel (x64)</div>
@@ -492,7 +363,7 @@
       </a>
 
       <!-- Windows -->
-      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/latest/download/ShubhamMauryaBrowser.Setup.1.0.0.exe" class="download-card">
+      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/latest" class="download-card">
         <span class="os-icon">🪟</span>
         <div class="os-name">Windows</div>
         <div class="os-info">Windows 10 / 11 (x64)</div>
@@ -510,32 +381,69 @@
     </div>
   </div>
 
-  <!-- ════════ MOBILE PWA SECTION ════════ -->
+  <!-- INSTALL INSTRUCTIONS -->
+  <div class="install-instructions">
+    <h3>⚠️ First-Time Installation Guide</h3>
+    <p>
+      App <strong>unsigned</strong> hai, isliye macOS aur Windows pehli baar warning dikhayenge. Ye normal hai — aapka app <strong>safe hai</strong>. Neeche diye steps follow karo (sirf ek baar karna hai):
+    </p>
+
+    <!-- macOS Instructions -->
+    <div class="install-option">
+      <div class="install-option-title">🍎 macOS Users</div>
+      <p style="font-size: 12px; color: #a6adc8; margin-bottom: 8px;">Agar "Malware Blocked" ya "Unidentified Developer" popup aaye:</p>
+
+      <strong style="color: #89b4fa; font-size: 12px; display: block; margin-bottom: 6px;">Option 1 — Terminal (fastest):</strong>
+      <code>sudo xattr -cr /Applications/Universal\ Browser.app</code>
+
+      <strong style="color: #89b4fa; font-size: 12px; display: block; margin-top: 12px; margin-bottom: 6px;">Option 2 — System Settings:</strong>
+      <ol>
+        <li>System Settings kholo</li>
+        <li>Privacy &amp; Security me jao</li>
+        <li>Neeche scroll karo</li>
+        <li><strong>"Open Anyway"</strong> click karo</li>
+        <li>Password daalo</li>
+      </ol>
+    </div>
+
+    <!-- Windows Instructions -->
+    <div class="install-option">
+      <div class="install-option-title">🪟 Windows Users</div>
+      <p style="font-size: 12px; color: #a6adc8; margin-bottom: 8px;">Agar "Windows protected your PC" warning aaye:</p>
+      <ol>
+        <li><strong>"More info"</strong> link pe click karo</li>
+        <li><strong>"Run anyway"</strong> button click karo</li>
+        <li>App install ho jayega</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- MOBILE SECTION -->
   <div class="mobile-section">
     <span class="mobile-icon">📱</span>
-    <h2>Mobile Pe Install Karo</h2>
+    <h2>Mobile Pe Ad-Free Browsing Chahiye?</h2>
     <p>
-      Ye browser abhi Mac aur Windows pe available hai.<br>
-      <strong style="color: #89b4fa;">Mobile pe PWA install karke use karo</strong> — home screen pe icon ban jayega.
+      Ye browser abhi <strong>Mac aur Windows</strong> pe available hai.<br>
+      Mobile pe ad-free browsing ke liye:
     </p>
 
     <div class="mobile-steps">
       <div class="mobile-step">
-        <span class="step-icon">🤖</span>
-        <div><strong>Android:</strong> Chrome me kholo → Menu (⋮) → "Add to Home screen"</div>
-      </div>
-      <div class="mobile-step">
         <span class="step-icon">🍎</span>
         <div><strong>iOS:</strong> Safari me kholo → Share (□↑) → "Add to Home Screen"</div>
+      </div>
+      <div class="mobile-step">
+        <span class="step-icon">🤖</span>
+        <div><strong>Android:</strong> Chrome me kholo → Menu (⋮) → "Add to Home screen"</div>
       </div>
     </div>
 
     <p style="font-size: 12px; color: #6c7086; margin-top: 16px;">
-      Home screen pe <strong style="color: #89b4fa;">"UB"</strong> icon ban jayega — tap karo aur browser khulega!
+      Home screen pe <strong style="color: #89b4fa;">"UB"</strong> icon ban jayega!
     </p>
   </div>
 
-  <!-- ════════ FEATURES ════════ -->
+  <!-- FEATURES -->
   <div class="features">
     <div class="feature">
       <span class="feature-icon">🛡️</span>
@@ -599,7 +507,7 @@
     </div>
   </div>
 
-  <!-- ════════ FOOTER ════════ -->
+  <!-- FOOTER -->
   <div class="footer">
     <div class="social-links">
       <a href="https://github.com/sm1646767-pshyco" title="GitHub">🐙</a>
@@ -610,11 +518,11 @@
     </p>
     <p style="margin-top: 8px;">
       <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser">GitHub</a> ·
-      MIT License · © 2026 · v3.2.0
+      MIT License · © 2026 · v3.3.0
     </p>
   </div>
 
-  <!-- ════════ PWA SERVICE WORKER ════════ -->
+  <!-- PWA SERVICE WORKER -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -624,29 +532,15 @@
       });
     }
 
-    // Mobile detect — auto-scroll to mobile section
+    // Mobile auto-scroll to mobile section
     document.addEventListener('DOMContentLoaded', () => {
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       if (isMobile) {
         setTimeout(() => {
-          const mobileSection = document.querySelector('.mobile-section');
-          if (mobileSection) {
-            mobileSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
-        }, 500);
+          const section = document.querySelector('.mobile-section');
+          if (section) section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 800);
       }
-    });
-
-    // PWA install prompt
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      console.log('📱 PWA install available');
-    });
-
-    window.addEventListener('appinstalled', () => {
-      console.log('✅ PWA installed');
     });
   </script>
 
