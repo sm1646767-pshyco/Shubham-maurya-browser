@@ -8,41 +8,15 @@
 <body>
   <div class="app">
 
-    <!-- ════════ SIDEBAR ════════ -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-top">
         <div class="brand">
           <span class="brand-icon">UB</span>
           <span class="brand-name">Universal</span>
         </div>
-        <button class="icon-btn" id="collapseSidebar" title="Collapse (Ctrl+B)">◀</button>
       </div>
 
-      <button class="new-tab-side" id="newTabBtn" title="New Tab (Ctrl+T)">
-        <span>＋</span> New Tab
-        <!-- Sidebar me add karo -->
-<button class="side-btn ai-btn" id="aiBtn">
-  <span>🤖</span> AI Assistant
-</button>
-
-<!-- Main ke baad -->
-<aside class="ai-panel" id="aiPanel">
-  <div class="ai-panel-header">
-    <div class="ai-panel-title">
-      <span class="ai-icon">🤖</span>
-      <h2>AI Assistant</h2>
-    </div>
-    <button class="icon-btn" id="aiPanelClose">✕</button>
-  </div>
-  <div class="ai-panel-body">
-    <div class="ai-chat" id="aiChat"></div>
-  </div>
-  <div class="ai-panel-footer">
-    <input type="text" id="aiInput" placeholder="Ask AI anything..." />
-    <button class="ai-send-btn" id="aiSendBtn">→</button>
-  </div>
-</aside>
-      </button>
+      <button class="new-tab-side" id="newTabBtn">＋ New Tab</button>
 
       <div class="sidebar-section">
         <input type="text" class="tab-search" id="tabSearch" placeholder="🔍 Search tabs..." />
@@ -51,6 +25,7 @@
       <div class="tabs-list" id="tabsList"></div>
 
       <div class="sidebar-bottom">
+        <button class="side-btn ai-btn" id="aiBtn"><span>🤖</span> AI Assistant</button>
         <button class="side-btn" id="bookmarksBtn"><span>⭐</span> Bookmarks</button>
         <button class="side-btn" id="historyBtn"><span>🕐</span> History</button>
         <button class="side-btn" id="downloadsBtn"><span>⬇️</span> Downloads</button>
@@ -60,51 +35,35 @@
       </div>
     </aside>
 
-    <!-- ════════ MAIN ════════ -->
     <main class="main">
       <div class="toolbar">
-        <button class="icon-btn" id="expandSidebar" title="Show Sidebar" style="display:none;">▶</button>
-        <button class="icon-btn" id="backBtn" title="Back (Alt+←)">◀</button>
-        <button class="icon-btn" id="forwardBtn" title="Forward (Alt+→)">▶</button>
-        <button class="icon-btn" id="reloadBtn" title="Reload (Ctrl+R)">⟳</button>
+        <button class="icon-btn" id="backBtn" title="Back">◀</button>
+        <button class="icon-btn" id="forwardBtn" title="Forward">▶</button>
+        <button class="icon-btn" id="reloadBtn" title="Reload">⟳</button>
         <button class="icon-btn" id="homeBtn" title="Home">⌂</button>
 
         <div class="url-bar">
-          <span class="lock-icon" id="lockIcon">🔒</span>
-          <input type="text" id="urlInput" placeholder="Search or enter URL (Ctrl+L)" spellcheck="false" />
-          <button class="icon-btn small" id="bookmarkStar" title="Bookmark (Ctrl+D)">☆</button>
+          <span class="lock-icon">🔒</span>
+          <input type="text" id="urlInput" placeholder="Search or enter URL..." spellcheck="false" />
+          <button class="icon-btn small" id="bookmarkStar" title="Bookmark">☆</button>
           <button class="go-btn" id="goBtn">Go</button>
         </div>
 
-        <div class="shield" id="shield" title="Ads blocked">
-          🛡️ <span id="blockedCount">0</span>
-        </div>
+        <div class="shield" id="shield">🛡️ <span id="blockedCount">0</span></div>
 
-        <button class="icon-btn" id="zoomOutBtn" title="Zoom Out">−</button>
-        <span class="zoom-label" id="zoomLabel">100%</span>
-        <button class="icon-btn" id="zoomInBtn" title="Zoom In">＋</button>
         <button class="icon-btn" id="incognitoBtn" title="Incognito">🕶️</button>
         <button class="icon-btn" id="readingBtn" title="Reading Mode">📖</button>
         <button class="icon-btn" id="screenshotBtn" title="Screenshot">📸</button>
-        <button class="icon-btn" id="pipBtn" title="Picture-in-Picture">🎬</button>
-        <button class="icon-btn" id="fullscreenBtn" title="Fullscreen (F11)">⛶</button>
-        <button class="icon-btn" id="cmdBtn" title="Command Palette (Ctrl+K)">⌘</button>
-        <button class="icon-btn" id="menuBtn" title="Menu">☰</button>
-      </div>
-
-      <div class="bookmarks-bar" id="bookmarksBar">
-        <div class="bm-items" id="bmItems"></div>
-        <button class="icon-btn small" id="addBookmarkBtn" title="Bookmark (Ctrl+D)">＋</button>
+        <button class="icon-btn" id="cmdBtn" title="Command Palette">⌘</button>
       </div>
 
       <div class="content" id="content"></div>
 
-      <!-- START PAGE -->
       <div class="start-page" id="startPage">
         <div class="logo-badge"><span class="logo-text">UB</span></div>
         <h1>Universal</h1>
         <p class="subtitle">Browser</p>
-        <p class="tagline">Ad-free · Fast · Private · Crafted with ❤️ by Shubham Maurya</p>
+        <p class="tagline">Ad-free · Fast · Private · by Shubham Maurya</p>
 
         <div class="search-box">
           <input type="text" id="startSearch" placeholder="Search or enter URL..." autofocus />
@@ -122,22 +81,11 @@
         </div>
 
         <div class="footer-credit">
-          <span>v5.0.0</span> · <span>Made by <b>Shubham Maurya</b></span> · <span>© 2026</span>
+          <span>v6.0.0</span> · <span>Made by <b>Shubham Maurya</b></span>
         </div>
       </div>
-
-      <!-- READING MODE -->
-      <div class="reader-overlay" id="readerOverlay">
-        <div class="reader-header">
-          <button class="reader-close" id="readerCloseBtn" title="Close">✕</button>
-          <button class="reader-btn" id="readerThemeBtn" title="Toggle theme">🌓</button>
-        </div>
-        <article class="reader-content" id="readerContent"></article>
-      </div>
-
     </main>
 
-    <!-- ════════ SIDE PANEL ════════ -->
     <aside class="panel" id="panel">
       <div class="panel-header">
         <h2 id="panelTitle">Bookmarks</h2>
@@ -146,37 +94,74 @@
       <div class="panel-body" id="panelBody"></div>
     </aside>
 
-  </div>
-
-  <!-- ════════ COMMAND PALETTE ════════ -->
-  <div class="cmd-overlay" id="cmdOverlay">
-    <div class="cmd-box">
-      <div class="cmd-input-wrap">
-        <span class="cmd-icon">⌘</span>
-        <input type="text" id="cmdInput" placeholder="Type a command or search..." autocomplete="off" />
-        <span class="cmd-hint">ESC</span>
+    <aside class="ai-panel" id="aiPanel">
+      <div class="ai-panel-header">
+        <div class="ai-panel-title">
+          <span class="ai-icon">🤖</span>
+          <h2>AI Assistant</h2>
+        </div>
+        <button class="icon-btn" id="aiPanelClose">✕</button>
       </div>
-      <div class="cmd-results" id="cmdResults"></div>
-    </div>
+
+      <div class="ai-panel-body" id="aiPanelBody">
+        <div class="ai-welcome" id="aiWelcome">
+          <div class="ai-welcome-icon">🤖</div>
+          <h3>Universal AI</h3>
+          <p>Ask me anything about this page.</p>
+        </div>
+
+        <div class="ai-quick-actions">
+          <button class="ai-action-btn" data-action="summarize"><span>📄</span> Summarize</button>
+          <button class="ai-action-btn" data-action="keypoints"><span>🔑</span> Key Points</button>
+          <button class="ai-action-btn" data-action="explain"><span>💡</span> Explain</button>
+          <button class="ai-action-btn" data-action="rewrite"><span>✍️</span> Rewrite</button>
+        </div>
+
+        <div class="ai-ask-section">
+          <div class="ai-section-title">💬 Ask This Page</div>
+          <div class="ai-ask-input-wrap">
+            <input type="text" id="aiAskInput" placeholder="Ask about this page..." />
+            <button class="ai-ask-btn" id="aiAskBtn">Ask</button>
+          </div>
+        </div>
+
+        <div class="ai-translate-section">
+          <div class="ai-section-title">🌐 Translate</div>
+          <div class="ai-translate-wrap">
+            <select id="aiLangSelect" class="ai-lang-select">
+              <option value="English">English</option>
+              <option value="Hindi">हिन्दी (Hindi)</option>
+              <option value="Spanish">Spanish</option>
+              <option value="French">French</option>
+              <option value="German">German</option>
+              <option value="Chinese">Chinese</option>
+              <option value="Japanese">Japanese</option>
+              <option value="Bengali">Bengali</option>
+              <option value="Tamil">Tamil</option>
+              <option value="Telugu">Telugu</option>
+            </select>
+            <button class="ai-translate-btn" id="aiTranslatePageBtn">Page</button>
+            <button class="ai-translate-btn secondary" id="aiTranslateSelectionBtn">Selection</button>
+          </div>
+          <div class="ai-detected-lang" id="aiDetectedLang"></div>
+        </div>
+
+        <div class="ai-chat" id="aiChat"></div>
+      </div>
+
+      <div class="ai-panel-footer">
+        <button class="ai-mic-btn" id="aiMicBtn">🎤</button>
+        <input type="text" id="aiInput" placeholder="Ask AI anything..." />
+        <button class="ai-send-btn" id="aiSendBtn">→</button>
+        <button class="ai-speak-btn" id="aiSpeakBtn">🔊</button>
+      </div>
+    </aside>
+
   </div>
 
-  <!-- ════════ FIND IN PAGE ════════ -->
-  <div class="find-overlay" id="findOverlay">
-    <div class="find-box">
-      <input type="text" id="findInput" placeholder="Find in page..." autocomplete="off" />
-      <span class="find-counter" id="findCounter">0/0</span>
-      <button class="find-btn" id="findPrevBtn" title="Previous">▲</button>
-      <button class="find-btn" id="findNextBtn" title="Next">▼</button>
-      <button class="find-btn" id="findCloseBtn" title="Close">✕</button>
-    </div>
-  </div>
-
-  <!-- ════════ TOASTS ════════ -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- ════════ CONTEXT MENU ════════ -->
-  <div class="context-menu" id="contextMenu"></div>
-
   <script src="renderer.js"></script>
+  <script src="ai.js"></script>
 </body>
 </html>

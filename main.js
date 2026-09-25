@@ -1,81 +1,45 @@
 // ═══════════════════════════════════════════════════════════════
-//   UNIVERSAL BROWSER v5.0.0 — main.js
-//   Electron Main Process
-//   Author: Shubham Maurya
+//   UNIVERSAL BROWSER v6.0.0 — main.js
 // ═══════════════════════════════════════════════════════════════
 
-const { app, BrowserWindow, ipcMain, session, Menu, shell, webContents, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, session, Menu, shell, webContents } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
-// ═══════════════════════════════════════════════════════════════
-//   COMMAND LINE FLAGS
-// ═══════════════════════════════════════════════════════════════
 app.commandLine.appendSwitch('log-level', '3');
 app.commandLine.appendSwitch('disable-logging');
-app.commandLine.appendSwitch('enable-features', 'WebContentsForceFullscreen');
-app.commandLine.appendSwitch('disable-features', 'CrossOriginOpenerPolicy');
 
 // ═══════════════════════════════════════════════════════════════
-//   AD DOMAIN BLACKLIST — 300+ domains
+//   ENV + OPENAI
+// ═══════════════════════════════════════════════════════════════
+require('dotenv').config();
+let openai = null;
+try {
+  const OpenAI = require('openai');
+  if (process.env.OPENAI_API_KEY) {
+    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    console.log('[AI] OpenAI initialized ✅');
+  } else {
+    console.warn('[AI] OPENAI_API_KEY missing in .env');
+  }
+} catch (e) {
+  console.warn('[AI] OpenAI package not installed:', e.message);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//   AD DOMAINS
 // ═══════════════════════════════════════════════════════════════
 const AD_DOMAINS = [
-  // Google Ads & Analytics
   'doubleclick.net', 'googlesyndication.com', 'googleadservices.com',
   'google-analytics.com', 'googletagmanager.com', 'googletagservices.com',
   'adservice.google.com', 'pagead2.googlesyndication.com',
   'analytics.google.com', 'ssl.google-analytics.com',
-  'googlesyndication.com', 'googletagservices.com',
-  'adwords.google.com', 'adwords.l.google.com',
-  'googleadapis.l.google.com', 'googleads.g.doubleclick.net',
-  'googleads4.g.doubleclick.net', 'static.doubleclick.net',
-  'stats.g.doubleclick.net', 'cm.g.doubleclick.net',
-  'pagead.l.doubleclick.net', 'pubads.g.doubleclick.net',
-  'securepubads.g.doubleclick.net', 'tpc.googlesyndication.com',
-  'video-ad-stats.googlesyndication.com',
-
-  // Amazon Ads
-  'amazon-adsystem.com', 'aax.amazon-adsystem.com',
-  'aax-us-east.amazon-adsystem.com', 'c.amazon-adsystem.com',
-  'z-na.amazon-adsystem.com', 'fls-na.amazon-adsystem.com',
-  'mads.amazon-adsystem.com', 's.amazon-adsystem.com',
-
-  // Facebook / Meta
-  'connect.facebook.net', 'graph.facebook.com',
-  'business.facebook.com', 'pixel.facebook.com',
-  'an.facebook.com', 'tr.facebook.com',
-
-  // Microsoft / Bing
-  'bat.bing.com', 'c.bing.com', 'analytics.microsoft.com',
-  'clarity.microsoft.com', 'ads.microsoft.com',
-  'c1.microsoft.com', 'c2.microsoft.com', 'c3.microsoft.com',
-
-  // Twitter / X
-  'static.ads-twitter.com', 'analytics.twitter.com',
-  'ads.twitter.com', 't.co/ads', 'syndication.twitter.com',
-
-  // LinkedIn
-  'snap.licdn.com', 'px.ads.linkedin.com', 'ads.linkedin.com',
-
-  // TikTok / ByteDance
-  'analytics.tiktok.com', 'analytics-ipv6.tiktok.com',
-  'business-api.tiktok.com', 'ads.tiktok.com',
-  'sf16-va.tiktokcdn.com', 'log.tiktokv.com',
-
-  // Pinterest
-  'ads.pinterest.com', 'log.pinterest.com', 'trk.pinterest.com',
-
-  // Snapchat
-  'tr.snapchat.com', 'sc-analytics.appspot.com',
-
-  // Major Ad Networks
   'ads.yahoo.com', 'advertising.com', 'adnxs.com', 'adsrvr.org',
-  'criteo.com', 'criteo.net', 'taboola.com', 'outbrain.com',
-  'pubmatic.com', 'rubiconproject.com', 'openx.net',
-  'casalemedia.com', 'smartadserver.com', 'yieldmo.com',
-  'sharethrough.com', 'teads.tv', 'spotxchange.com',
-  'springserve.com', 'tremorhub.com', 'adcolony.com',
-  'applovin.com', 'unityads.unity3d.com', 'vungle.com',
+  'amazon-adsystem.com', 'criteo.com', 'criteo.net', 'taboola.com',
+  'outbrain.com', 'pubmatic.com', 'rubiconproject.com', 'openx.net',
+  'casalemedia.com', 'smartadserver.com', 'yieldmo.com', 'sharethrough.com',
+  'teads.tv', 'spotxchange.com', 'springserve.com', 'tremorhub.com',
+  'adcolony.com', 'applovin.com', 'unityads.unity3d.com', 'vungle.com',
   'chartboost.com', 'inmobi.com', 'mopub.com', 'smaato.net',
   'adform.net', 'adsafeprotected.com', 'bluekai.com', 'demdex.net',
   'krxd.net', 'mathtag.com', 'exelator.com', 'agkn.com', 'rlcdn.com',
@@ -101,15 +65,11 @@ const AD_DOMAINS = [
   'scorecardresearch.com', 'quantserve.com', 'moatads.com',
   'hotjar.com', 'mouseflow.com', 'crazyegg.com', 'luckyorange.com',
   'clarity.ms', 'fullstory.com', 'smartlook.com', 'logrocket.com',
+  'connect.facebook.net', 'bat.bing.com', 'analytics.tiktok.com',
+  'ads.pinterest.com', 'static.ads-twitter.com', 'analytics.twitter.com',
   'mediavine.com', 'adthrive.com', 'ezoic.net', 'ezoic.com',
   'monumetric.com', 'pubfuture.com', 'onesignal.com', 'pushcrew.com',
-  'pushengage.com', 'izooto.com', 'adition.com',
-  'crwdcntrl.net', 'datalogix.com', 'dotomi.com', 'eloqua.com',
-  'eyeota.net', 'indexexchange.com', 'marketplace.android.com',
-  'ml314.com', 'mookie1.com', 'netmng.com', 'nexac.com',
-  'omtrdc.net', 'owneriq.net', 'rfihub.com', 'serving-sys.com',
-  'sitescout.com', 'stickyadstv.com', 'tidaltv.com', 'turn.com',
-  'vidora.com', 'zeotap.com'
+  'pushengage.com', 'izooto.com'
 ];
 
 const AD_URL_PATTERNS = [
@@ -123,7 +83,7 @@ const AD_URL_PATTERNS = [
   /\/ad-container/i, /\/adsystem/i, /\/adblock/i,
   /youtube\.com\/api\/stats\/ads/i, /youtube\.com\/pagead/i,
   /youtube\.com\/ptracking/i, /youtube\.com\/get_midroll/i,
-  /googlevideo\.com\/.*\/ad/i, /\/csi_204/i, /\/generate_204/i
+  /googlevideo\.com\/.*\/ad/i, /\/csi_204/i
 ];
 
 const WHITELIST = [
@@ -146,13 +106,7 @@ const WHITELIST = [
 ];
 
 let blockedCount = 0;
-let stats = {
-  blocked: 0,
-  timeSaved: 0,
-  dataSaved: 0,
-  sitesVisited: 0,
-  startTime: Date.now()
-};
+let stats = { blocked: 0, timeSaved: 0, dataSaved: 0, sitesVisited: 0, startTime: Date.now() };
 
 function shouldBlock(url) {
   try {
@@ -165,303 +119,81 @@ function shouldBlock(url) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//   AD HIDE CSS
+//   AD HIDE CSS + JS
 // ═══════════════════════════════════════════════════════════════
 const AD_HIDE_CSS = `
-  /* YouTube */
-  .ytp-ad-module,
-  .ytp-ad-overlay-container,
-  .ytp-ad-progress-list,
-  .ytp-ad-image-overlay,
-  .ytp-ad-text-overlay,
-  .ytp-ad-player-overlay,
-  .ytp-ad-player-overlay-flyout-cta,
-  .ytp-ad-survey-questions,
-  .ytp-ad-survey,
-  ytd-promoted-sparkles-web-renderer,
-  ytd-promoted-video-renderer,
-  ytd-display-ad-renderer,
-  ytd-ad-slot-renderer,
-  ytd-in-feed-ad-layout-renderer,
-  ytd-banner-promo-renderer,
-  ytd-statement-banner-renderer,
-  ytd-compact-promoted-video-renderer,
-  ytd-promoted-sparkles-text-search-renderer,
-  #player-ads,
-  #masthead-ad,
-  .ytp-featured-product,
-  .ytp-suggested-action,
-  .ytp-paid-content-overlay,
-  .ytp-ad-badge,
-  .ytp-ad-action-interstitial,
-  .ytp-ad-overlay-slot,
-
-  /* Google search */
-  .commercial-unit-desktop-top,
-  .commercial-unit-desktop-rhs,
-  .commercial-unit-mobile-top,
-  .commercial-unit-mobile-bottom,
-  #tads, #tadsb, #bottomads, #rhsads,
-  [data-text-ad="1"], [data-text-ad-slot],
-
-  /* Generic */
-  div[aria-label="Ads"],
-  div[aria-label="Advertisement"],
-  [id^="div-gpt-ad-"],
-  [id^="google_ads_iframe_"],
-  [id^="aswift_"],
-  iframe[id^="google_ads_iframe"],
-  iframe[src*="doubleclick.net"],
-  iframe[src*="googlesyndication.com"],
-  iframe[src*="adservice.google"],
-  iframe[src*="/pagead/"],
-  ins.adsbygoogle,
-  .adsbygoogle,
-  .adblock-overlay,
-  .adblocker-detected,
-  [class*="adblock-warning"] {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-    height: 0 !important;
-  }
-
-  /* Protect video player */
-  #movie_player,
-  .html5-video-player,
-  .html5-video-container,
-  .html5-main-video,
-  video {
-    display: revert !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
+  .ytp-ad-module, .ytp-ad-overlay-container, .ytp-ad-progress-list,
+  .ytp-ad-image-overlay, .ytp-ad-text-overlay, .ytp-ad-player-overlay,
+  ytd-promoted-sparkles-web-renderer, ytd-promoted-video-renderer,
+  ytd-display-ad-renderer, ytd-ad-slot-renderer, ytd-in-feed-ad-layout-renderer,
+  #player-ads, #masthead-ad, .commercial-unit-desktop-top,
+  #tads, #tadsb, #bottomads, #rhsads, [data-text-ad="1"],
+  ins.adsbygoogle, iframe[id^="google_ads_iframe"],
+  iframe[src*="doubleclick.net"], iframe[src*="googlesyndication.com"],
+  div[id^="div-gpt-ad-"] { display: none !important; }
+  #movie_player, .html5-video-player, video {
+    display: revert !important; visibility: visible !important;
+    opacity: 1 !important; pointer-events: auto !important;
   }
 `;
 
-// ═══════════════════════════════════════════════════════════════
-//   AD KILLER JS — Injected into every page
-// ═══════════════════════════════════════════════════════════════
 const AD_KILLER_JS = `
 (function() {
-  if (window.__smAdKillerV5) return;
-  window.__smAdKillerV5 = true;
-
+  if (window.__smAdKillerV6) return;
+  window.__smAdKillerV6 = true;
   function isProtected(el) {
     if (!el) return true;
     if (el.id === 'movie_player') return true;
-    if (el.id === 'player') return true;
     if (el.closest && el.closest('#movie_player')) return true;
     if (el.closest && el.closest('.html5-video-player')) return true;
-    if (el.closest && el.closest('.html5-video-container')) return true;
     if (el.tagName === 'VIDEO') return true;
-    if (el.tagName === 'SOURCE') return true;
-    if (el.tagName === 'TRACK') return true;
     if (['HTML','BODY','HEAD','MAIN'].includes(el.tagName)) return true;
     return false;
   }
-
-  const adSelectors = [
-    '.ytp-ad-module',
-    '.ytp-ad-overlay-container',
-    '.ytp-ad-progress-list',
-    '.ytp-ad-image-overlay',
-    '.ytp-ad-text-overlay',
-    '.ytp-ad-player-overlay',
-    '.ytp-ad-player-overlay-flyout-cta',
-    'ytd-promoted-sparkles-web-renderer',
-    'ytd-promoted-video-renderer',
-    'ytd-display-ad-renderer',
-    'ytd-ad-slot-renderer',
-    'ytd-in-feed-ad-layout-renderer',
-    'ytd-banner-promo-renderer',
-    'ytd-statement-banner-renderer',
-    'ytd-compact-promoted-video-renderer',
-    '#player-ads',
-    '#masthead-ad',
-    '.commercial-unit-desktop-top',
-    '.commercial-unit-desktop-rhs',
-    '#tads', '#tadsb', '#bottomads', '#rhsads',
-    '[data-text-ad="1"]',
-    'ins.adsbygoogle',
-    'iframe[id^="google_ads_iframe"]',
-    'iframe[src*="doubleclick.net"]',
-    'iframe[src*="googlesyndication.com"]',
-    'iframe[src*="adservice.google"]',
-    'div[id^="div-gpt-ad-"]',
-    'div[id^="google_ads_iframe_"]',
-    '[class*="adblock-overlay"]',
-    '[class*="adblock-warning"]'
+  const selectors = [
+    '.ytp-ad-module', '.ytp-ad-overlay-container',
+    'ytd-promoted-sparkles-web-renderer', 'ytd-display-ad-renderer',
+    '#player-ads', '#masthead-ad', '#tads', '#tadsb',
+    'ins.adsbygoogle', 'iframe[src*="doubleclick.net"]',
+    'div[id^="div-gpt-ad-"]'
   ];
-
   function removeAds() {
-    for (const sel of adSelectors) {
+    selectors.forEach(function(sel) {
       try {
-        document.querySelectorAll(sel).forEach(el => {
+        document.querySelectorAll(sel).forEach(function(el) {
           if (isProtected(el)) return;
           el.remove();
         });
-      } catch (e) {}
-    }
+      } catch(e) {}
+    });
   }
-
   function youtubeAdSkip() {
     if (!location.hostname.includes('youtube.com')) return;
-    const player = document.getElementById('movie_player');
+    var player = document.getElementById('movie_player');
     if (!player) return;
-    const isAd = player.classList.contains('ad-showing')
-              || player.classList.contains('ad-interrupting');
+    var isAd = player.classList.contains('ad-showing') || player.classList.contains('ad-interrupting');
     if (isAd) {
-      const skipBtn = document.querySelector(
-        '.ytp-ad-skip-button, .ytp-ad-skip-button-modern, .ytp-skip-ad-button, .ytp-ad-skip-button-slot button'
-      );
-      if (skipBtn) {
-        try { skipBtn.click(); } catch (e) {}
-      } else {
-        const video = player.querySelector('video');
-        if (video && video.duration && video.duration > 0 && isFinite(video.duration)) {
-          try {
-            video.currentTime = video.duration;
-            video.playbackRate = 16;
-            video.muted = true;
-          } catch (e) {}
+      var skipBtn = document.querySelector('.ytp-ad-skip-button, .ytp-skip-ad-button');
+      if (skipBtn) skipBtn.click();
+      else {
+        var video = player.querySelector('video');
+        if (video && video.duration && isFinite(video.duration)) {
+          try { video.currentTime = video.duration; video.playbackRate = 16; video.muted = true; } catch(e) {}
         }
       }
-      const overlay = document.querySelector('.ytp-ad-overlay-container');
-      if (overlay) overlay.style.display = 'none';
-    } else {
-      const video = player.querySelector('video');
-      if (video) {
-        try {
-          if (video.playbackRate > 2) video.playbackRate = 1;
-          if (video.muted && !video.__userMuted) video.muted = false;
-        } catch (e) {}
-      }
     }
   }
-
-  // ═══ SponsorBlock ═══
-  async function sponsorBlockSkip() {
-    if (!location.hostname.includes('youtube.com')) return;
-    if (!location.pathname.includes('/watch')) return;
-    const video = document.querySelector('video');
-    if (!video || !video.duration) return;
-    const videoId = new URLSearchParams(location.search).get('v');
-    if (!videoId || video.__sbVideoId === videoId) return;
-    video.__sbVideoId = videoId;
-    try {
-      const res = await fetch('https://sponsor.ajay.app/api/skipSegments/' + videoId);
-      if (!res.ok) return;
-      const segments = await res.json();
-      if (segments && segments.length) {
-        const checkSkip = () => {
-          const t = video.currentTime;
-          for (const seg of segments) {
-            if (t >= seg.segment[0] && t < seg.segment[1]) {
-              video.currentTime = seg.segment[1];
-              break;
-            }
-          }
-        };
-        video.addEventListener('timeupdate', checkSkip);
-      }
-    } catch (e) {}
-  }
-
-  // ═══ Bypass anti-adblock ═══
-  function bypassAntiAdblock() {
-    const antiSelectors = [
-      '[class*="adblock"]', '[id*="adblock"]',
-      '[class*="ad-block"]', '[id*="ad-block"]',
-      '[class*="adwall"]', '[class*="ad-wall"]'
-    ];
-    antiSelectors.forEach(sel => {
-      try {
-        document.querySelectorAll(sel).forEach(el => {
-          if (isProtected(el)) return;
-          if (el.tagName === 'BODY' || el.tagName === 'HTML') return;
-          el.remove();
-        });
-      } catch (e) {}
-    });
-    if (document.body) {
-      try {
-        document.body.style.overflow = 'auto';
-        document.body.style.position = 'static';
-      } catch (e) {}
-    }
-  }
-
-  // Track user mute preference
-  document.addEventListener('volumechange', (e) => {
-    const v = e.target;
-    if (v && v.tagName === 'VIDEO') {
-      const p = v.closest('#movie_player');
-      if (!p || !p.classList.contains('ad-showing')) v.__userMuted = v.muted;
-    }
-  }, true);
-
-  // Block popups
-  const origOpen = window.open;
-  window.open = function(url, ...args) {
-    if (!url) return null;
-    const lower = String(url).toLowerCase();
-    const bad = ['doubleclick', 'googlesyndication', 'adservice',
-                 'popads', 'popcash', 'propellerads', 'adsterra',
-                 'popunder', '/ads/'];
-    if (bad.some(b => lower.includes(b))) return null;
-    return origOpen.call(window, url, ...args);
-  };
-
-  // Block push notifications
-  if (window.Notification) {
-    try { window.Notification.requestPermission = () => Promise.resolve('denied'); } catch (e) {}
-  }
-
-  // Main loop
-  setInterval(() => {
-    removeAds();
-    youtubeAdSkip();
-    bypassAntiAdblock();
-  }, 1000);
-
-  // Mutation observer for instant removal
-  const observer = new MutationObserver((mutations) => {
-    for (const m of mutations) {
-      if (m.addedNodes.length) {
-        removeAds();
-        youtubeAdSkip();
-        break;
-      }
-    }
-  });
-
-  function startObserver() {
-    if (document.body) {
-      observer.observe(document.body, { childList: true, subtree: true });
-    } else {
-      setTimeout(startObserver, 100);
-    }
-  }
-  startObserver();
-
-  sponsorBlockSkip();
-  console.log('[Universal Browser] AdKiller v5.0 ✅');
+  setInterval(function() { removeAds(); youtubeAdSkip(); }, 1000);
+  console.log('[AdKiller] ✅ Installed');
 })();
 `;
 
-// ═══════════════════════════════════════════════════════════════
-//   APPLY AD BLOCK TO SESSION
-// ═══════════════════════════════════════════════════════════════
 function applyAdBlockToSession(sess) {
   if (sess.__adblockApplied) return;
   sess.__adblockApplied = true;
 
   sess.webRequest.onBeforeRequest({ urls: ['<all_urls>'] }, (details, callback) => {
-    if (details.resourceType === 'mainFrame') {
-      return callback({ cancel: false });
-    }
+    if (details.resourceType === 'mainFrame') return callback({ cancel: false });
     if (shouldBlock(details.url)) {
       blockedCount++;
       stats.blocked = blockedCount;
@@ -473,28 +205,8 @@ function applyAdBlockToSession(sess) {
     callback({ cancel: false });
   });
 
-  sess.webRequest.onBeforeSendHeaders({ urls: ['<all_urls>'] }, (details, callback) => {
-    const headers = details.requestHeaders;
-    delete headers['X-Requested-With'];
-    if (headers['Referer']) {
-      try {
-        const refHost = new URL(headers['Referer']).hostname;
-        const reqHost = new URL(details.url).hostname;
-        if (refHost !== reqHost) delete headers['Referer'];
-      } catch {
-        delete headers['Referer'];
-      }
-    }
-    callback({ requestHeaders: headers });
-  });
-
   sess.setPermissionRequestHandler((wc, permission, callback) => {
-    const allowed = ['fullscreen', 'clipboard-sanitized-write', 'media', 'geolocation'];
-    callback(allowed.includes(permission));
-  });
-
-  sess.setPermissionCheckHandler((wc, permission) => {
-    return ['fullscreen', 'clipboard-sanitized-write', 'media', 'geolocation'].includes(permission);
+    callback(['fullscreen', 'clipboard-sanitized-write', 'media', 'audioCapture'].includes(permission));
   });
 }
 
@@ -504,69 +216,6 @@ function injectAdKiller(wc) {
   wc.on('did-navigate-in-page', () => {
     wc.insertCSS(AD_HIDE_CSS).catch(() => {});
     wc.executeJavaScript(AD_KILLER_JS, true).catch(() => {});
-  });
-}
-
-// ═══════════════════════════════════════════════════════════════
-//   DOWNLOADS TRACKER
-// ═══════════════════════════════════════════════════════════════
-const downloads = [];
-
-function attachDownloadHandler(sess) {
-  if (sess.__downloadHandlerAttached) return;
-  sess.__downloadHandlerAttached = true;
-
-  sess.on('will-download', (event, item, webContents) => {
-    const id = Date.now() + '-' + Math.random().toString(36).slice(2, 8);
-    const filename = item.getFilename();
-    const url = item.getURL();
-    const savePath = path.join(app.getPath('downloads'), filename);
-
-    const download = {
-      id,
-      filename,
-      url,
-      path: savePath,
-      totalBytes: item.getTotalBytes(),
-      receivedBytes: 0,
-      state: 'progressing',
-      startTime: Date.now()
-    };
-    downloads.push(download);
-
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      mainWindow.webContents.send('download-started', {
-        id, filename, url, totalBytes: download.totalBytes
-      });
-    }
-
-    item.on('updated', (e, state) => {
-      download.receivedBytes = item.getReceivedBytes();
-      download.state = state;
-      if (mainWindow && !mainWindow.isDestroyed()) {
-        mainWindow.webContents.send('download-progress', {
-          id,
-          receivedBytes: download.receivedBytes,
-          totalBytes: download.totalBytes,
-          state,
-          speed: item.getReceivedBytes() / ((Date.now() - download.startTime) / 1000)
-        });
-      }
-    });
-
-    item.once('done', (e, state) => {
-      download.state = state;
-      download.path = item.getSavePath();
-      download.endTime = Date.now();
-      if (mainWindow && !mainWindow.isDestroyed()) {
-        mainWindow.webContents.send('download-done', {
-          id,
-          state,
-          path: download.path,
-          filename: download.filename
-        });
-      }
-    });
   });
 }
 
@@ -585,9 +234,6 @@ function createWindow() {
     backgroundColor: '#1e1e2e',
     titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'default',
     trafficLightPosition: { x: 16, y: 16 },
-    fullscreenable: true,
-    maximizable: true,
-    resizable: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -595,50 +241,114 @@ function createWindow() {
       sandbox: false,
       webviewTag: true,
       partition: 'persist:browser',
-      webSecurity: true,
-      allowRunningInsecureContent: false,
-      experimentalFeatures: false,
-      backgroundThrottling: false,
-      spellcheck: true
+      webSecurity: true
     }
   });
 
   mainWindow.loadFile('index.html');
+  // ═══════════════════════════════════════════════════════════════
+//   CLIPBOARD SHORTCUTS (Copy/Paste/Cut/Select All)
+// ═══════════════════════════════════════════════════════════════
+mainWindow.webContents.on('before-input-event', (event, input) => {
+  if (input.type !== 'keyDown') return;
+  
+  const isMac = process.platform === 'darwin';
+  const cmd = isMac ? input.meta : input.control;
+  
+  // Cmd/Ctrl + C — Copy
+  if (cmd && input.key.toLowerCase() === 'c') {
+    mainWindow.webContents.copy();
+    event.preventDefault();
+  }
+  
+  // Cmd/Ctrl + V — Paste
+  if (cmd && input.key.toLowerCase() === 'v') {
+    mainWindow.webContents.paste();
+    event.preventDefault();
+  }
+  
+  // Cmd/Ctrl + X — Cut
+  if (cmd && input.key.toLowerCase() === 'x') {
+    mainWindow.webContents.cut();
+    event.preventDefault();
+  }
+  
+  // Cmd/Ctrl + A — Select All
+  if (cmd && input.key.toLowerCase() === 'a') {
+    mainWindow.webContents.selectAll();
+    event.preventDefault();
+  }
+  
+  // Cmd/Ctrl + Z — Undo
+  if (cmd && input.key.toLowerCase() === 'z') {
+    mainWindow.webContents.undo();
+    event.preventDefault();
+  }
+  
+  // Cmd/Ctrl + Shift + Z — Redo
+  if (cmd && input.shift && input.key.toLowerCase() === 'z') {
+    mainWindow.webContents.redo();
+    event.preventDefault();
+  }
+});
+  // ═══ Enable DevTools ═══
+mainWindow.webContents.openDevTools({ mode: 'detach' });
 
-  mainWindow.on('enter-full-screen', () => {
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      mainWindow.webContents.send('fullscreen-changed', true);
-    }
-  });
-
-  mainWindow.on('leave-full-screen', () => {
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      mainWindow.webContents.send('fullscreen-changed', false);
-    }
-  });
+// Keyboard shortcut for DevTools
+mainWindow.webContents.on('before-input-event', (event, input) => {
+  // F12 — Toggle DevTools
+  if (input.key === 'F12') {
+    mainWindow.webContents.toggleDevTools();
+    event.preventDefault();
+  }
+  // Cmd+Option+I — DevTools
+  if (input.meta && input.alt && input.key === 'i') {
+    mainWindow.webContents.toggleDevTools();
+    event.preventDefault();
+  }
+});
 
   mainWindow.webContents.on('did-attach-webview', (event, wc) => {
+        // ═══ Webview Clipboard Shortcuts ═══
+    wc.on('before-input-event', (event, input) => {
+      if (input.type !== 'keyDown') return;
+      
+      const isMac = process.platform === 'darwin';
+      const cmd = isMac ? input.meta : input.control;
+      const key = input.key.toLowerCase();
+      
+      // Copy
+      if (cmd && key === 'c') {
+        wc.copy();
+        event.preventDefault();
+      }
+      
+      // Paste
+      if (cmd && key === 'v') {
+        wc.paste();
+        event.preventDefault();
+      }
+      
+      // Cut
+      if (cmd && key === 'x') {
+        wc.cut();
+        event.preventDefault();
+      }
+      
+      // Select All
+      if (cmd && key === 'a') {
+        wc.selectAll();
+        event.preventDefault();
+      }
+    });
     applyAdBlockToSession(wc.session);
-    attachDownloadHandler(wc.session);
-
-    wc.setUserAgent(
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
-      '(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
-    );
-
+    wc.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36');
     wc.on('did-finish-load', () => injectAdKiller(wc));
     wc.on('dom-ready', () => injectAdKiller(wc));
-
     wc.setWindowOpenHandler(({ url }) => {
       if (shouldBlock(url)) return { action: 'deny' };
-      if (mainWindow && !mainWindow.isDestroyed()) {
-        mainWindow.webContents.send('open-new-tab', url);
-      }
+      if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('open-new-tab', url);
       return { action: 'deny' };
-    });
-
-    wc.on('will-navigate', (ev, url) => {
-      if (shouldBlock(url)) ev.preventDefault();
     });
   });
 
@@ -658,45 +368,22 @@ function updateBadge() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//   IPC HANDLERS
+//   IPC — BASIC
 // ═══════════════════════════════════════════════════════════════
 ipcMain.handle('get-blocked-count', () => blockedCount);
-
 ipcMain.handle('reset-blocked-count', () => {
   blockedCount = 0;
-  stats = {
-    blocked: 0,
-    timeSaved: 0,
-    dataSaved: 0,
-    sitesVisited: 0,
-    startTime: Date.now()
-  };
+  stats = { blocked: 0, timeSaved: 0, dataSaved: 0, sitesVisited: 0, startTime: Date.now() };
   updateBadge();
   return blockedCount;
 });
-
 ipcMain.handle('get-stats', () => stats);
-
-ipcMain.handle('increment-sites', () => {
-  stats.sitesVisited++;
-  return stats.sitesVisited;
-});
+ipcMain.handle('increment-sites', () => { stats.sitesVisited++; return stats.sitesVisited; });
 
 ipcMain.on('webview-ready', (e, id) => {
   const wc = webContents.fromId(id);
-  if (wc) {
-    applyAdBlockToSession(wc.session);
-    injectAdKiller(wc);
-  }
+  if (wc) { applyAdBlockToSession(wc.session); injectAdKiller(wc); }
 });
-
-// Window controls
-ipcMain.on('window-minimize', () => mainWindow && mainWindow.minimize());
-ipcMain.on('window-maximize', () => {
-  if (!mainWindow) return;
-  mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize();
-});
-ipcMain.on('window-close', () => mainWindow && mainWindow.close());
 
 ipcMain.handle('window-toggle-fullscreen', () => {
   if (!mainWindow) return false;
@@ -704,39 +391,15 @@ ipcMain.handle('window-toggle-fullscreen', () => {
   mainWindow.setFullScreen(!isFs);
   return !isFs;
 });
+ipcMain.handle('window-is-fullscreen', () => mainWindow ? mainWindow.isFullScreen() : false);
 
-ipcMain.handle('window-is-fullscreen', () => {
-  return mainWindow ? mainWindow.isFullScreen() : false;
-});
-
-// Downloads
-ipcMain.handle('get-downloads', () => downloads);
-ipcMain.handle('clear-downloads', () => {
-  downloads.length = 0;
-  return true;
-});
-
-ipcMain.on('open-downloaded-file', (e, p) => {
-  if (p && fs.existsSync(p)) shell.openPath(p);
-});
-
-ipcMain.on('show-in-folder', (e, p) => {
-  if (p && fs.existsSync(p)) shell.showItemInFolder(p);
-});
-
-ipcMain.on('open-external', (e, url) => {
-  if (url && /^https?:\/\//i.test(url)) shell.openExternal(url);
-});
-
-// Screenshot
 ipcMain.handle('save-screenshot', async (e, dataURL) => {
   try {
     const base64 = dataURL.replace(/^data:image\/\w+;base64,/, '');
     const buffer = Buffer.from(base64, 'base64');
     const dir = path.join(app.getPath('pictures'), 'UniversalBrowser');
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    const filename = `screenshot-${Date.now()}.png`;
-    const filepath = path.join(dir, filename);
+    const filepath = path.join(dir, 'screenshot-' + Date.now() + '.png');
     fs.writeFileSync(filepath, buffer);
     return { success: true, path: filepath };
   } catch (err) {
@@ -744,54 +407,25 @@ ipcMain.handle('save-screenshot', async (e, dataURL) => {
   }
 });
 
-// Reading Mode
 ipcMain.handle('extract-article', async (e) => {
   const wc = e.sender;
   try {
     const result = await wc.executeJavaScript(`
       (function() {
-        const title = document.querySelector('h1')?.innerText
-                   || document.title || 'Untitled';
-        const author = document.querySelector('[rel="author"]')?.innerText
-                    || document.querySelector('.author')?.innerText
-                    || document.querySelector('[class*="author"]')?.innerText
-                    || '';
-        const date = document.querySelector('time')?.innerText
-                  || document.querySelector('[class*="date"]')?.innerText
-                  || '';
-
-        let article = document.querySelector('article')
-                   || document.querySelector('[role="main"]')
-                   || document.querySelector('main')
-                   || document.querySelector('.post-content')
-                   || document.querySelector('.article-content')
-                   || document.querySelector('.entry-content')
-                   || document.querySelector('#content')
-                   || document.body;
-
-        const clone = article.cloneNode(true);
-
-        clone.querySelectorAll('script, style, nav, header, footer, aside, iframe, noscript, .ad, .ads, [class*="ad-"], [class*="sidebar"], [class*="comment"], [class*="share"], [class*="social"], button, form, [role="navigation"]').forEach(el => el.remove());
-
-        const blocks = [];
-        clone.querySelectorAll('h1, h2, h3, h4, p, blockquote, ul, ol, pre, img').forEach(el => {
+        var title = (document.querySelector('h1') || {}).innerText || document.title || 'Untitled';
+        var article = document.querySelector('article') || document.querySelector('main') || document.body;
+        var clone = article.cloneNode(true);
+        clone.querySelectorAll('script, style, nav, header, footer, aside, iframe, .ad, .ads, [class*="ad-"]').forEach(function(el) { el.remove(); });
+        var blocks = [];
+        clone.querySelectorAll('h1, h2, h3, h4, p, blockquote, pre, img').forEach(function(el) {
           if (el.tagName === 'IMG') {
-            const src = el.src || el.dataset.src;
-            if (src && src.startsWith('http')) {
-              blocks.push({ type: 'img', src, alt: el.alt || '' });
-            }
+            if (el.src && el.src.startsWith('http')) blocks.push({ type: 'img', src: el.src, alt: el.alt || '' });
           } else {
-            const text = el.innerText.trim();
-            if (text.length > 20 || /^H[1-4]$/.test(el.tagName)) {
-              blocks.push({
-                type: el.tagName.toLowerCase(),
-                text
-              });
-            }
+            var text = el.innerText.trim();
+            if (text.length > 20) blocks.push({ type: el.tagName.toLowerCase(), text: text });
           }
         });
-
-        return { title, author, date, blocks, url: location.href };
+        return { title: title, blocks: blocks };
       })();
     `, true);
     return { success: true, data: result };
@@ -801,53 +435,12 @@ ipcMain.handle('extract-article', async (e) => {
 });
 
 // ═══════════════════════════════════════════════════════════════
-//   APP LIFECYCLE
+//   AI HANDLERS — DAY 1-4 COMPLETE
 // ═══════════════════════════════════════════════════════════════
-app.whenReady().then(() => {
-  app.setName('Universal Browser');
 
-  applyAdBlockToSession(session.defaultSession);
-  attachDownloadHandler(session.defaultSession);
-  session.defaultSession.setUserAgent(
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
-    '(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
-  );
-
-  const wvSession = session.fromPartition('persist:browser');
-  applyAdBlockToSession(wvSession);
-  attachDownloadHandler(wvSession);
-  wvSession.setUserAgent(
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
-    '(KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
-  );
-
-  createWindow();
-
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
-});
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
-});
-
-Menu.setApplicationMenu(null);
-// ═══════════════════════════════════════════════
-//   AI INTEGRATION — OpenAI GPT-4
-// ═══════════════════════════════════════════════
-require('dotenv').config();
-const OpenAI = require('openai');
-
-let openai = null;
-if (process.env.OPENAI_API_KEY) {
-  openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-}
-
+// Day 1: Chat
 ipcMain.handle('ai-chat', async (e, messages) => {
-  if (!openai) {
-    return { success: false, error: 'OpenAI API key not set in .env' };
-  }
+  if (!openai) return { success: false, error: 'OpenAI API key not set' };
   try {
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
@@ -861,14 +454,15 @@ ipcMain.handle('ai-chat', async (e, messages) => {
   }
 });
 
-ipcMain.handle('ai-summarize', async (e, pageContent) => {
-  if (!openai) return { success: false, error: 'API key missing' };
+// Day 2: Summarize
+ipcMain.handle('ai-summarize', async (e, content) => {
+  if (!openai) return { success: false, error: 'OpenAI API key not set' };
   try {
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
-        { role: 'system', content: 'You are a helpful assistant. Summarize webpages concisely.' },
-        { role: 'user', content: 'Summarize this page:\n\n' + pageContent.substring(0, 8000) }
+        { role: 'system', content: 'Summarize this webpage concisely with bullet points.' },
+        { role: 'user', content: content.substring(0, 8000) }
       ],
       max_tokens: 500
     });
@@ -878,23 +472,7 @@ ipcMain.handle('ai-summarize', async (e, pageContent) => {
   }
 });
 
-ipcMain.handle('ai-translate', async (e, text, targetLang) => {
-  if (!openai) return { success: false, error: 'API key missing' };
-  try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: 'You are a translator. Translate accurately.' },
-        { role: 'user', content: 'Translate to ' + targetLang + ':\n\n' + text }
-      ],
-      max_tokens: 2000
-    });
-    return { success: true, text: response.choices[0].message.content };
-  } catch (err) {
-    return { success: false, error: err.message };
-  }
-});
-
+// Day 2: Get page content
 ipcMain.handle('ai-page-content', async (e) => {
   const wc = e.sender;
   try {
@@ -907,3 +485,217 @@ ipcMain.handle('ai-page-content', async (e) => {
     return { success: false, error: err.message };
   }
 });
+
+// Day 3: Ask This Page
+ipcMain.handle('ai-ask-page', async (e, question) => {
+  if (!openai) return { success: false, error: 'OpenAI API key not set' };
+  const wc = e.sender;
+  try {
+    const pageContent = await wc.executeJavaScript(
+      'document.body ? document.body.innerText.substring(0, 12000) : ""',
+      true
+    );
+    if (!pageContent || pageContent.length < 50) {
+      return { success: false, error: 'Page content too short' };
+    }
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: 'Answer questions based ONLY on this page content. If not in content, say "Not found in this page."\n\n=== PAGE ===\n' + pageContent + '\n=== END ===' },
+        { role: 'user', content: question }
+      ],
+      temperature: 0.5,
+      max_tokens: 1000
+    });
+    return { success: true, text: response.choices[0].message.content };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+// Day 3: Translate text
+ipcMain.handle('ai-translate', async (e, text, targetLang) => {
+  if (!openai) return { success: false, error: 'OpenAI API key not set' };
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: 'Translate to ' + targetLang + '. Only return translation.' },
+        { role: 'user', content: text }
+      ],
+      temperature: 0.3,
+      max_tokens: 2000
+    });
+    return { success: true, text: response.choices[0].message.content };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+// Day 3: Translate Page
+ipcMain.handle('ai-translate-page', async (e, targetLang) => {
+  if (!openai) return { success: false, error: 'OpenAI API key not set' };
+  const wc = e.sender;
+  try {
+    const pageContent = await wc.executeJavaScript(
+      'document.body ? document.body.innerText.substring(0, 8000) : ""',
+      true
+    );
+    if (!pageContent) return { success: false, error: 'No content' };
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: 'Translate this webpage content to ' + targetLang + '. Preserve structure.' },
+        { role: 'user', content: pageContent }
+      ],
+      temperature: 0.3,
+      max_tokens: 4000
+    });
+    return { success: true, text: response.choices[0].message.content };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+// Day 3: Detect language
+ipcMain.handle('ai-detect-language', async (e) => {
+  if (!openai) return { success: false, error: 'OpenAI API key not set' };
+  const wc = e.sender;
+  try {
+    const sample = await wc.executeJavaScript(
+      'document.body ? document.body.innerText.substring(0, 500) : ""',
+      true
+    );
+    if (!sample) return { success: false, error: 'No content' };
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: 'Detect language. Return ONLY the language name in English.' },
+        { role: 'user', content: sample }
+      ],
+      temperature: 0,
+      max_tokens: 20
+    });
+    return { success: true, language: response.choices[0].message.content.trim() };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+// Day 3: Get selection
+ipcMain.handle('ai-get-selection', async (e) => {
+  const wc = e.sender;
+  try {
+    const text = await wc.executeJavaScript(
+      'window.getSelection ? window.getSelection().toString() : ""',
+      true
+    );
+    return { success: true, text: text || '' };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+// Day 4: Voice settings
+ipcMain.handle('voice-save-settings', async (e, settings) => {
+  try {
+    const settingsPath = path.join(app.getPath('userData'), 'voice-settings.json');
+    fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('voice-load-settings', async () => {
+  try {
+    const settingsPath = path.join(app.getPath('userData'), 'voice-settings.json');
+    if (fs.existsSync(settingsPath)) {
+      return { success: true, settings: JSON.parse(fs.readFileSync(settingsPath, 'utf8')) };
+    }
+    return { success: true, settings: {} };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+//   APP LIFECYCLE
+// ═══════════════════════════════════════════════════════════════
+app.whenReady().then(() => {
+  app.setName('Universal Browser');
+
+  applyAdBlockToSession(session.defaultSession);
+  session.defaultSession.setUserAgent(
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+  );
+
+  const wvSession = session.fromPartition('persist:browser');
+  applyAdBlockToSession(wvSession);
+  wvSession.setUserAgent(
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+  );
+
+  createWindow();
+
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+});
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit();
+});
+
+// ═══ APPLICATION MENU (for clipboard shortcuts on Mac) ═══
+const menu = Menu.buildFromTemplate([
+  {
+    label: 'Universal Browser',
+    submenu: [
+      { role: 'about' },
+      { type: 'separator' },
+      { role: 'services' },
+      { type: 'separator' },
+      { role: 'hide' },
+      { role: 'hideOthers' },
+      { role: 'unhide' },
+      { type: 'separator' },
+      { role: 'quit' }
+    ]
+  },
+  {
+    label: 'Edit',
+    submenu: [
+      { role: 'undo' },
+      { role: 'redo' },
+      { type: 'separator' },
+      { role: 'cut' },
+      { role: 'copy' },
+      { role: 'paste' },
+      { role: 'selectAll' }
+    ]
+  },
+  {
+    label: 'View',
+    submenu: [
+      { role: 'reload' },
+      { role: 'forceReload' },
+      { role: 'toggleDevTools' },
+      { type: 'separator' },
+      { role: 'resetZoom' },
+      { role: 'zoomIn' },
+      { role: 'zoomOut' },
+      { type: 'separator' },
+      { role: 'togglefullscreen' }
+    ]
+  },
+  {
+    label: 'Window',
+    submenu: [
+      { role: 'minimize' },
+      { role: 'zoom' },
+      { role: 'close' }
+    ]
+  }
+]);
+Menu.setApplicationMenu(menu);
