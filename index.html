@@ -2,292 +2,653 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Universal Browser</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+  <meta name="description" content="Universal Browser — Ad-free, fast, private browser by Shubham Maurya. Available for Mac, Windows, Android, and iOS." />
+  <meta name="keywords" content="universal browser, ad-free browser, adblock, shubham maurya, mac browser, windows browser, android browser" />
+  <meta name="author" content="Shubham Maurya" />
+  <meta name="theme-color" content="#89b4fa" />
+
+  <!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+  <meta property="og:title" content="Universal Browser — Ad-free, Fast, Private" />
+  <meta property="og:description" content="Ad-free universal browser by Shubham Maurya. Block ads on YouTube, Google, and every website." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://sm1646767-pshyco.github.io/Shubham-maurya-browser/" />
+  <meta property="og:image" content="icon-512.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Universal Browser — Ad-free, Fast, Private" />
+  <meta name="twitter:description" content="Ad-free universal browser by Shubham Maurya." />
+  <meta name="twitter:image" content="icon-512.png" />
+
+  <!-- PWA Support -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Universal Browser">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" href="icon-192.png">
+
+  <title>Universal Browser — Ad-free, Fast, Private by Shubham Maurya</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #1e1e2e 0%, #181825 100%);
+      color: #cdd6f4;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ════════ HERO SECTION ════════ */
+    .hero {
+      max-width: 900px;
+      width: 100%;
+      text-align: center;
+      padding: 40px 16px 20px;
+    }
+
+    .logo {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #89b4fa, #cba6f7);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      font-weight: 900;
+      color: #11111b;
+      margin: 0 auto 24px;
+      box-shadow: 0 20px 60px rgba(137, 180, 250, 0.4);
+      animation: float 4s ease-in-out infinite;
+      letter-spacing: -2px;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      background: linear-gradient(90deg, #89b4fa 0%, #cba6f7 50%, #f38ba8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.1;
+      letter-spacing: -1px;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: #a6adc8;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    .author {
+      font-size: 14px;
+      color: #6c7086;
+      margin-bottom: 32px;
+    }
+
+    .author b {
+      background: linear-gradient(90deg, #89b4fa, #cba6f7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+    }
+
+    /* ════════ CTA BUTTONS ════════ */
+    .cta-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      min-height: 48px;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #89b4fa, #cba6f7);
+      color: #11111b;
+      box-shadow: 0 8px 24px rgba(137, 180, 250, 0.4);
+    }
+
+    .btn-primary:hover, .btn-primary:active {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(137, 180, 250, 0.6);
+    }
+
+    .btn-secondary {
+      background: #313244;
+      color: #cdd6f4;
+      border: 1px solid #45475a;
+    }
+
+    .btn-secondary:hover, .btn-secondary:active {
+      background: #45475a;
+    }
+
+    /* ════════ DOWNLOAD SECTION ════════ */
+    .download-section {
+      max-width: 900px;
+      width: 100%;
+      margin-bottom: 60px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+      color: #cdd6f4;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: #a6adc8;
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    .download-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .download-card {
+      background: #313244;
+      border: 1px solid #45475a;
+      border-radius: 16px;
+      padding: 24px 20px;
+      text-align: center;
+      text-decoration: none;
+      color: #cdd6f4;
+      transition: all 0.2s;
+      display: block;
+    }
+
+    .download-card:hover, .download-card:active {
+      transform: translateY(-4px);
+      border-color: #89b4fa;
+      box-shadow: 0 12px 32px rgba(137, 180, 250, 0.2);
+    }
+
+    .download-card .os-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .download-card .os-name {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .download-card .os-info {
+      font-size: 12px;
+      color: #a6adc8;
+      margin-bottom: 12px;
+    }
+
+    .download-card .os-size {
+      font-size: 11px;
+      color: #6c7086;
+      padding: 4px 10px;
+      background: #1e1e2e;
+      border-radius: 20px;
+      display: inline-block;
+    }
+
+    .download-card .os-badge {
+      font-size: 10px;
+      color: #a6e3a1;
+      padding: 2px 8px;
+      background: rgba(166, 227, 161, 0.15);
+      border-radius: 20px;
+      display: inline-block;
+      margin-top: 8px;
+      font-weight: 600;
+    }
+
+    /* ════════ MOBILE PWA SECTION ════════ */
+    .mobile-section {
+      max-width: 900px;
+      width: 100%;
+      margin-bottom: 60px;
+      padding: 28px 24px;
+      background: linear-gradient(135deg, rgba(137, 180, 250, 0.1), rgba(203, 166, 247, 0.1));
+      border: 1px solid rgba(137, 180, 250, 0.3);
+      border-radius: 20px;
+      text-align: center;
+    }
+
+    .mobile-section .mobile-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .mobile-section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #cdd6f4;
+    }
+
+    .mobile-section p {
+      color: #a6adc8;
+      font-size: 14px;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .mobile-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 500px;
+      margin: 0 auto 20px;
+      text-align: left;
+    }
+
+    .mobile-step {
+      background: #1e1e2e;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      color: #cdd6f4;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mobile-step .step-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .mobile-step strong {
+      color: #89b4fa;
+    }
+
+    /* ════════ FEATURES ════════ */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      max-width: 1000px;
+      width: 100%;
+      margin-bottom: 60px;
+    }
+
+    .feature {
+      background: #313244;
+      padding: 24px 20px;
+      border-radius: 16px;
+      text-align: left;
+      border: 1px solid #45475a;
+      transition: all 0.2s;
+    }
+
+    .feature:hover {
+      transform: translateY(-4px);
+      border-color: #89b4fa;
+    }
+
+    .feature-icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .feature h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #cdd6f4;
+    }
+
+    .feature p {
+      font-size: 13px;
+      color: #a6adc8;
+      line-height: 1.6;
+    }
+
+    /* ════════ FOOTER ════════ */
+    .footer {
+      text-align: center;
+      color: #6c7086;
+      font-size: 13px;
+      padding: 40px 20px;
+      border-top: 1px solid #313244;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .footer a {
+      color: #89b4fa;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .footer .social-links {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .footer .social-links a {
+      font-size: 20px;
+      color: #a6adc8;
+    }
+
+    .footer .social-links a:hover {
+      color: #89b4fa;
+    }
+
+    /* ════════ RESPONSIVE — MOBILE FIRST ════════ */
+    @media (max-width: 768px) {
+      h1 { font-size: 36px; }
+      .subtitle { font-size: 16px; }
+      .logo { width: 80px; height: 80px; font-size: 34px; }
+      .section-title { font-size: 20px; }
+      .mobile-section h2 { font-size: 18px; }
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 16px 12px; }
+      h1 { font-size: 30px; }
+      .subtitle { font-size: 14px; }
+      .logo { width: 72px; height: 72px; font-size: 30px; margin-bottom: 20px; }
+      .cta-buttons { flex-direction: column; }
+      .btn { width: 100%; }
+      .features { grid-template-columns: 1fr; }
+      .download-grid { grid-template-columns: 1fr; }
+      .mobile-step { font-size: 12px; padding: 10px 12px; }
+    }
+
+    /* ════════ iOS SPECIFIC ════════ */
+    @supports (-webkit-touch-callout: none) {
+      .btn {
+        -webkit-appearance: none;
+        appearance: none;
+      }
+    }
+
+    /* ════════ ANDROID SPECIFIC ════════ */
+    @media (prefers-color-scheme: dark) {
+      body { background: linear-gradient(135deg, #1e1e2e 0%, #181825 100%); }
+    }
+
+    /* ════════ TABLET ════════ */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      h1 { font-size: 42px; }
+    }
+
+    /* ════════ ACCESSIBILITY ════════ */
+    @media (prefers-reduced-motion: reduce) {
+      .logo { animation: none; }
+      * { transition: none !important; }
+    }
+
+    /* ════════ PRINT ════════ */
+    @media print {
+      body { background: white; color: black; }
+      .btn, .mobile-section { display: none; }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       MAIN APP CONTAINER
-       ═══════════════════════════════════════════════════════════════ -->
-  <div class="app" id="app">
-
-    <!-- ═══════════════════════════════════════════════════════════════
-         SIDEBAR
-         ═══════════════════════════════════════════════════════════════ -->
-    <aside class="sidebar" id="sidebar">
-      
-      <div class="sidebar-top">
-        <div class="brand">
-          <span class="brand-icon">UB</span>
-          <span class="brand-name">Universal</span>
-        </div>
-        <button class="icon-btn" id="collapseSidebar" title="Collapse Sidebar (Ctrl+B)">◀</button>
-      </div>
-
-      <button class="new-tab-side" id="newTabBtn" title="New Tab (Ctrl+T)">
-        <span class="new-tab-icon">＋</span>
-        <span>New Tab</span>
-      </button>
-
-      <div class="sidebar-section">
-        <input type="text" class="tab-search" id="tabSearch" placeholder="🔍 Search tabs..." autocomplete="off" />
-      </div>
-
-      <div class="tabs-list" id="tabsList"></div>
-
-      <div class="sidebar-bottom">
-        <button class="side-btn" id="bookmarksBtn"><span class="side-icon">⭐</span><span>Bookmarks</span></button>
-        <button class="side-btn" id="historyBtn"><span class="side-icon">🕐</span><span>History</span></button>
-        <button class="side-btn" id="passwordsBtn"><span class="side-icon">🔐</span><span>Passwords</span></button>
-        <button class="side-btn" id="downloadsBtn"><span class="side-icon">⬇️</span><span>Downloads</span></button>
-        <button class="side-btn" id="statsBtn"><span class="side-icon">📊</span><span>Statistics</span></button>
-        <button class="side-btn" id="notesBtn"><span class="side-icon">📝</span><span>Notes</span></button>
-        <button class="side-btn" id="settingsBtn"><span class="side-icon">⚙️</span><span>Settings</span></button>
-      </div>
-    </aside>
-
-    <!-- ═══════════════════════════════════════════════════════════════
-         MAIN AREA
-         ═══════════════════════════════════════════════════════════════ -->
-    <main class="main">
-
-      <!-- ═══ TOOLBAR ═══ -->
-      <div class="toolbar" id="toolbar">
-        <button class="icon-btn" id="expandSidebar" title="Show Sidebar" style="display:none;">▶</button>
-        <button class="icon-btn" id="backBtn" title="Back (Alt+←)" disabled>◀</button>
-        <button class="icon-btn" id="forwardBtn" title="Forward (Alt+→)" disabled>▶</button>
-        <button class="icon-btn" id="reloadBtn" title="Reload (Ctrl+R)">⟳</button>
-        <button class="icon-btn" id="homeBtn" title="Home">⌂</button>
-
-        <div class="url-bar" id="urlBar">
-          <span class="lock-icon" id="lockIcon" title="Secure connection">🔒</span>
-          <input type="text" id="urlInput" placeholder="Search or enter URL (Ctrl+L)" spellcheck="false" autocomplete="off" />
-          <button class="icon-btn small" id="bookmarkStar" title="Bookmark (Ctrl+D)">☆</button>
-          <button class="go-btn" id="goBtn" title="Go">Go</button>
-        </div>
-
-        <div class="shield" id="shield" title="Ads blocked — click to reset">
-          <span class="shield-icon">🛡️</span>
-          <span id="blockedCount">0</span>
-        </div>
-
-        <button class="icon-btn" id="torBtn" title="Toggle Tor (Dark Web)">🧅</button>
-        <button class="icon-btn" id="zoomOutBtn" title="Zoom Out">−</button>
-        <span class="zoom-label" id="zoomLabel">100%</span>
-        <button class="icon-btn" id="zoomInBtn" title="Zoom In">＋</button>
-
-        <button class="icon-btn" id="incognitoBtn" title="Incognito">🕶️</button>
-        <button class="icon-btn" id="readingBtn" title="Reading Mode">📖</button>
-        <button class="icon-btn" id="screenshotBtn" title="Screenshot">📸</button>
-        <button class="icon-btn" id="pipBtn" title="Picture-in-Picture">🎬</button>
-        <button class="icon-btn" id="fullscreenBtn" title="Fullscreen (F11)">⛶</button>
-        <button class="icon-btn" id="cmdBtn" title="Command Palette (Ctrl+K)">⌘</button>
-        <button class="icon-btn" id="splitBtn" title="Split Screen">⚏</button>
-        <button class="icon-btn" id="menuBtn" title="Menu">☰</button>
-      </div>
-
-      <!-- ═══ BOOKMARKS BAR ═══ -->
-      <div class="bookmarks-bar" id="bookmarksBar">
-        <div class="bm-items" id="bmItems"></div>
-        <button class="icon-btn small" id="addBookmarkBtn" title="Bookmark Current (Ctrl+D)">＋</button>
-      </div>
-
-      <!-- ═══ CONTENT AREA (Webviews inserted here) ═══ -->
-      <div class="content" id="content"></div>
-
-      <!-- ═══ START PAGE ═══ -->
-      <div class="start-page" id="startPage">
-        <div class="logo-badge">
-          <span class="logo-text">UB</span>
-        </div>
-
-        <h1 class="start-title">Universal</h1>
-        <p class="subtitle">BROWSER</p>
-        <p class="tagline">Ad-free · Fast · Private · Tor-Ready · by Shubham Maurya</p>
-
-        <div class="search-box">
-          <input type="text" id="startSearch" placeholder="Search the web or enter URL..." autofocus autocomplete="off" />
-          <div class="search-engines" id="searchEngines">
-            <button class="se-btn active" data-engine="google" title="Google">🔍</button>
-            <button class="se-btn" data-engine="duckduckgo" title="DuckDuckGo">🦆</button>
-            <button class="se-btn" data-engine="brave" title="Brave">🦁</button>
-            <button class="se-btn" data-engine="bing" title="Bing">🅱️</button>
-            <button class="se-btn" data-engine="chatgpt" title="ChatGPT">🤖</button>
-          </div>
-        </div>
-
-        <div class="shortcuts" id="shortcuts">
-          <div class="shortcut" data-url="https://www.google.com">
-            <div class="sc-icon">🔍</div><span>Google</span>
-          </div>
-          <div class="shortcut" data-url="https://www.youtube.com">
-            <div class="sc-icon">▶️</div><span>YouTube</span>
-          </div>
-          <div class="shortcut" data-url="https://chatgpt.com">
-            <div class="sc-icon">🤖</div><span>ChatGPT</span>
-          </div>
-          <div class="shortcut" data-url="https://github.com">
-            <div class="sc-icon">🐙</div><span>GitHub</span>
-          </div>
-          <div class="shortcut" data-url="https://www.wikipedia.org">
-            <div class="sc-icon">📖</div><span>Wikipedia</span>
-          </div>
-          <div class="shortcut" data-url="https://www.reddit.com">
-            <div class="sc-icon">👽</div><span>Reddit</span>
-          </div>
-          <div class="shortcut" data-url="https://stackoverflow.com">
-            <div class="sc-icon">💻</div><span>StackOverflow</span>
-          </div>
-          <div class="shortcut" data-url="https://claude.ai">
-            <div class="sc-icon">🧠</div><span>Claude</span>
-          </div>
-          <div class="shortcut" data-url="https://mail.google.com">
-            <div class="sc-icon">📧</div><span>Gmail</span>
-          </div>
-          <div class="shortcut" data-url="https://www.instagram.com">
-            <div class="sc-icon">📷</div><span>Instagram</span>
-          </div>
-          <div class="shortcut" data-url="https://twitter.com">
-            <div class="sc-icon">🐦</div><span>Twitter</span>
-          </div>
-          <div class="shortcut" data-url="https://www.linkedin.com">
-            <div class="sc-icon">💼</div><span>LinkedIn</span>
-          </div>
-        </div>
-
-        <div class="footer-credit">
-          <span class="credit-item">v5.0.0</span>
-          <span class="credit-dot">·</span>
-          <span class="credit-item">Made by <b>Shubham Maurya</b></span>
-          <span class="credit-dot">·</span>
-          <span class="credit-item">© 2026</span>
-        </div>
-      </div>
-
-      <!-- ═══ READING MODE ═══ -->
-      <div class="reader-overlay" id="readerOverlay">
-        <div class="reader-header">
-          <button class="reader-close" id="readerCloseBtn" title="Close (ESC)">✕</button>
-          <button class="reader-btn" id="readerThemeBtn" title="Toggle Theme">🌓</button>
-          <button class="reader-btn" id="readerFontIncrease" title="Increase Font">A+</button>
-          <button class="reader-btn" id="readerFontDecrease" title="Decrease Font">A-</button>
-        </div>
-        <article class="reader-content" id="readerContent"></article>
-      </div>
-
-      <!-- ═══ SPLIT SCREEN ═══ -->
-      <div class="split-container" id="splitContainer" style="display:none;">
-        <div class="split-pane" id="splitPaneLeft"></div>
-        <div class="split-divider" id="splitDivider"></div>
-        <div class="split-pane" id="splitPaneRight"></div>
-      </div>
-    </main>
-
-    <!-- ═══════════════════════════════════════════════════════════════
-         SIDE PANEL
-         ═══════════════════════════════════════════════════════════════ -->
-    <aside class="panel" id="panel">
-      <div class="panel-header">
-        <h2 id="panelTitle">Bookmarks</h2>
-        <div class="panel-header-actions">
-          <button class="icon-btn small" id="panelRefresh" title="Refresh">⟳</button>
-          <button class="icon-btn small" id="panelClose" title="Close">✕</button>
-        </div>
-      </div>
-      <div class="panel-body" id="panelBody"></div>
-    </aside>
-
+  <!-- ════════ HERO ════════ -->
+  <div class="hero">
+    <div class="logo">UB</div>
+    <h1>Universal Browser</h1>
+    <p class="subtitle">
+      Ad-free · Fast · Private<br>
+      YouTube, Google, aur har website pe ads block karo
+    </p>
+    <p class="author">Crafted with ❤️ by <b>Shubham Maurya</b></p>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       COMMAND PALETTE (Ctrl+K)
-       ═══════════════════════════════════════════════════════════════ -->
-  <div class="cmd-overlay" id="cmdOverlay">
-    <div class="cmd-box">
-      <div class="cmd-input-wrap">
-        <span class="cmd-icon">⌘</span>
-        <input type="text" id="cmdInput" placeholder="Type a command or search..." autocomplete="off" />
-        <span class="cmd-hint">ESC</span>
-      </div>
-      <div class="cmd-results" id="cmdResults"></div>
-      <div class="cmd-footer">
-        <span class="cmd-footer-item">↑↓ Navigate</span>
-        <span class="cmd-footer-item">↵ Select</span>
-        <span class="cmd-footer-item">ESC Close</span>
-      </div>
+  <!-- ════════ QUICK CTA ════════ -->
+  <div class="cta-buttons">
+    <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/latest" class="btn btn-primary">
+      📥 Download Now
+    </a>
+    <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser" class="btn btn-secondary">
+      ⭐ View on GitHub
+    </a>
+  </div>
+
+  <!-- ════════ DOWNLOAD SECTION ════════ -->
+  <div class="download-section">
+    <h2 class="section-title">📥 Download for Your Platform</h2>
+    <p class="section-subtitle">Free · Open Source · No Sign-up Required</p>
+
+    <div class="download-grid">
+      <!-- Mac Apple Silicon -->
+      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/latest/download/ShubhamMauryaBrowser-1.0.0-arm64.dmg" class="download-card">
+        <span class="os-icon">🍎</span>
+        <div class="os-name">Mac</div>
+        <div class="os-info">Apple Silicon (M1/M2/M3)</div>
+        <div class="os-size">~91 MB</div>
+        <div class="os-badge">✅ Recommended</div>
+      </a>
+
+      <!-- Mac Intel -->
+      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/latest/download/ShubhamMauryaBrowser-1.0.0.dmg" class="download-card">
+        <span class="os-icon">💻</span>
+        <div class="os-name">Mac</div>
+        <div class="os-info">Intel (x64)</div>
+        <div class="os-size">~97 MB</div>
+      </a>
+
+      <!-- Windows -->
+      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/latest/download/ShubhamMauryaBrowser.Setup.1.0.0.exe" class="download-card">
+        <span class="os-icon">🪟</span>
+        <div class="os-name">Windows</div>
+        <div class="os-info">Windows 10 / 11 (x64)</div>
+        <div class="os-size">~73 MB</div>
+        <div class="os-badge">✅ Recommended</div>
+      </a>
+
+      <!-- Linux -->
+      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/latest" class="download-card">
+        <span class="os-icon">🐧</span>
+        <div class="os-name">Linux</div>
+        <div class="os-info">AppImage / .deb</div>
+        <div class="os-size">Coming Soon</div>
+      </a>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       FIND IN PAGE (Ctrl+F)
-       ═══════════════════════════════════════════════════════════════ -->
-  <div class="find-overlay" id="findOverlay">
-    <div class="find-box">
-      <input type="text" id="findInput" placeholder="Find in page..." autocomplete="off" />
-      <span class="find-counter" id="findCounter">0/0</span>
-      <button class="find-btn" id="findPrevBtn" title="Previous">▲</button>
-      <button class="find-btn" id="findNextBtn" title="Next">▼</button>
-      <button class="find-btn" id="findCloseBtn" title="Close">✕</button>
+  <!-- ════════ MOBILE PWA SECTION ════════ -->
+  <div class="mobile-section">
+    <span class="mobile-icon">📱</span>
+    <h2>Mobile Pe Install Karo</h2>
+    <p>
+      Ye browser abhi Mac aur Windows pe available hai.<br>
+      <strong style="color: #89b4fa;">Mobile pe PWA install karke use karo</strong> — home screen pe icon ban jayega.
+    </p>
+
+    <div class="mobile-steps">
+      <div class="mobile-step">
+        <span class="step-icon">🤖</span>
+        <div><strong>Android:</strong> Chrome me kholo → Menu (⋮) → "Add to Home screen"</div>
+      </div>
+      <div class="mobile-step">
+        <span class="step-icon">🍎</span>
+        <div><strong>iOS:</strong> Safari me kholo → Share (□↑) → "Add to Home Screen"</div>
+      </div>
+    </div>
+
+    <p style="font-size: 12px; color: #6c7086; margin-top: 16px;">
+      Home screen pe <strong style="color: #89b4fa;">"UB"</strong> icon ban jayega — tap karo aur browser khulega!
+    </p>
+  </div>
+
+  <!-- ════════ FEATURES ════════ -->
+  <div class="features">
+    <div class="feature">
+      <span class="feature-icon">🛡️</span>
+      <h3>Built-in Ad Blocker</h3>
+      <p>250+ ad domains aur tracking pixels network level pe block hote hain.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">🎬</span>
+      <h3>YouTube Ad Skip</h3>
+      <p>Video ads automatically skip ho jate hain. Bina rukawat YouTube dekho.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">📺</span>
+      <h3>SponsorBlock</h3>
+      <p>YouTube ke sponsored segments auto-skip karo.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">⌨️</span>
+      <h3>Command Palette</h3>
+      <p>Ctrl+K se saare actions — new tab, bookmark, settings — ek jagah.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">📑</span>
+      <h3>Vertical Tabs</h3>
+      <p>Arc browser jaisa sidebar. Bahut tabs manage karna aasan.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">🔐</span>
+      <h3>Password Manager</h3>
+      <p>Passwords save karo locally. Koi cloud, koi tracking.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">📊</span>
+      <h3>Statistics</h3>
+      <p>Ads blocked, time saved, data saved — sab track karo.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">📖</span>
+      <h3>Reading Mode</h3>
+      <p>Articles ka clean view. Distraction-free reading.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">🎬</span>
+      <h3>Picture-in-Picture</h3>
+      <p>Video floating window me chalao. Multi-task karo.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">📸</span>
+      <h3>Screenshot Tool</h3>
+      <p>Ctrl+Shift+S se page ka screenshot. Auto-save to Pictures.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">🕶️</span>
+      <h3>Incognito Mode</h3>
+      <p>Private browsing. No history, no cookies, no tracking.</p>
+    </div>
+    <div class="feature">
+      <span class="feature-icon">🔒</span>
+      <h3>Privacy First</h3>
+      <p>Zero telemetry. Zero tracking. Aapka data aapke paas.</p>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       TOASTS
-       ═══════════════════════════════════════════════════════════════ -->
-  <div class="toast-container" id="toastContainer"></div>
-
-  <!-- ═══════════════════════════════════════════════════════════════
-       TOR INDICATOR
-       ═══════════════════════════════════════════════════════════════ -->
-  <div class="tor-indicator" id="torIndicator" style="display:none;">
-    <span class="tor-indicator-icon">🧅</span>
-    <span class="tor-indicator-text">TOR ACTIVE</span>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════════════
-       DOWNLOADS FLOAT
-       ═══════════════════════════════════════════════════════════════ -->
-  <div class="downloads-float" id="downloadsFloat" style="display:none;">
-    <div class="downloads-float-header">
-      <span class="downloads-float-icon">⬇️</span>
-      <span class="downloads-float-title">Downloads</span>
-      <button class="icon-btn small" id="downloadsFloatClose">✕</button>
+  <!-- ════════ FOOTER ════════ -->
+  <div class="footer">
+    <div class="social-links">
+      <a href="https://github.com/sm1646767-pshyco" title="GitHub">🐙</a>
+      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser" title="Repo">⭐</a>
     </div>
-    <div class="downloads-float-body" id="downloadsFloatBody"></div>
+    <p>
+      Made with ❤️ by <a href="https://github.com/sm1646767-pshyco">Shubham Maurya</a>
+    </p>
+    <p style="margin-top: 8px;">
+      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser">GitHub</a> ·
+      MIT License · © 2026 · v3.2.0
+    </p>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       SUGGESTIONS POPUP
-       ═══════════════════════════════════════════════════════════════ -->
-  <div class="suggestions-popup" id="suggestionsPopup" style="display:none;">
-    <div class="suggestions-list" id="suggestionsList"></div>
-  </div>
+  <!-- ════════ PWA SERVICE WORKER ════════ -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/Shubham-maurya-browser/sw.js')
+          .then(reg => console.log('✅ Service Worker registered:', reg.scope))
+          .catch(err => console.log('❌ Service Worker failed:', err));
+      });
+    }
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       AI CHAT SIDEBAR
-       ═══════════════════════════════════════════════════════════════ -->
-  <div class="ai-chat-overlay" id="aiChatOverlay" style="display:none;">
-    <div class="ai-chat-header">
-      <span class="ai-chat-icon">🤖</span>
-      <span class="ai-chat-title">AI Assistant</span>
-      <button class="icon-btn small" id="aiChatClose">✕</button>
-    </div>
-    <div class="ai-chat-body" id="aiChatBody"></div>
-    <div class="ai-chat-input-wrap">
-      <input type="text" id="aiChatInput" placeholder="Ask AI anything..." autocomplete="off" />
-      <button class="ai-chat-send" id="aiChatSend">→</button>
-    </div>
-  </div>
+    // Mobile detect — auto-scroll to mobile section
+    document.addEventListener('DOMContentLoaded', () => {
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (isMobile) {
+        setTimeout(() => {
+          const mobileSection = document.querySelector('.mobile-section');
+          if (mobileSection) {
+            mobileSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 500);
+      }
+    });
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       SCRIPTS — LOAD ORDER IMPORTANT HAI
-       blocklist → search-engine → renderer
-       ═══════════════════════════════════════════════════════════════ -->
-  <script src="blocklist.js"></script>
-  <script src="search-engine.js"></script>
-  <script src="renderer.js"></script>
+    // PWA install prompt
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      console.log('📱 PWA install available');
+    });
+
+    window.addEventListener('appinstalled', () => {
+      console.log('✅ PWA installed');
+    });
+  </script>
+
 </body>
 </html>
