@@ -57,4 +57,9 @@ contextBridge.exposeInMainWorld('browserAPI', {
   clearAllCookies: () => ipcRenderer.invoke('clear-all-cookies'),
   clearCache: () => ipcRenderer.invoke('clear-cache'),
   setPrivacySetting: (key, value) => ipcRenderer.invoke('set-privacy-setting', key, value),
+    // ═══ EXTENSIONS (Day 12) ═══
+  loadExtension: (path) => ipcRenderer.invoke('load-extension', path),
+  getExtensions: () => ipcRenderer.invoke('get-extensions'),
+  removeExtension: (id) => ipcRenderer.invoke('remove-extension', id),
+  selectExtensionFolder: () => ipcRenderer.invoke('select-extension-folder'),
 });

@@ -3,7 +3,7 @@
 //   Author: Shubham Maurya
 // ═══════════════════════════════════════════════════════════════
 
-const { app, BrowserWindow, ipcMain, session, Menu, shell, webContents } = require('electron');
+const { app, BrowserWindow, ipcMain, session, Menu, shell, webContents, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -777,12 +777,148 @@ ipcMain.handle('voice-load-settings', async () => {
     return { success: false, error: err.message };
   }
 });
+// ═══════════════════════════════════════════════════════════════
+//   EXTENSIONS MANAGER — DAY 12
+// ═══════════════════════════════════════════════════════════════
+let installedExtensions = [];
 
+// Load extension from folder
+ipcMain.handle('load-extension', async (e, extensionPath) => {
+  try {
+    // Validate path
+    if (!fs.existsSync(extensionPath)) {
+      return { success: false, error: 'Folder not found' };
+    }
+
+    // Check manifest.json
+    const manifestPath = path.join(extensionPath, 'manifest.json');
+    if (!fs.existsSync(manifestPath)) {
+      return { success: false, error: 'manifest.json not found. Ye valid Chrome extension folder nahi hai.' };
+    }
+
+    // Parse manifest
+    let manifest;
+    try {
+      manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    } catch (err) {
+      return { success: false, error: 'Invalid manifest.json' };
+    }
+
+    // Load extension into session
+    const wvSession = session.fromPartition('persist:browser');
+    const ext = await wvSession.loadExtension(extensionPath, {
+      allowFileAccess: true
+    });
+
+    // Save to list
+    const extensionInfo = {
+      id: ext.id,
+      name: ext.name || manifest.name || 'Unnamed Extension',
+      version: ext.version || manifest.version || '1.0.0',
+      description: ext.manifest?.description || manifest.description || '',
+      path: extensionPath,
+      permissions: ext.manifest?.permissions || manifest.permissions || [],
+      manifestVersion: manifest.manifest_version,
+      enabled: true,
+      loadedAt: Date.now()
+    };
+
+    installedExtensions.push(extensionInfo);
+
+    // Persist to file
+    const extFile = path.join(app.getPath('userData'), 'extensions.json');
+    fs.writeFileSync(extFile, JSON.stringify(installedExtensions, null, 2));
+
+    console.log('[Extensions] Loaded:', extensionInfo.name);
+    return { success: true, extension: extensionInfo };
+  } catch (err) {
+    console.error('[Extensions] Load error:', err);
+    return { success: false, error: err.message };
+  }
+});
+
+// Get all installed extensions
+ipcMain.handle('get-extensions', () => {
+  return installedExtensions;
+});
+
+// Remove extension
+ipcMain.handle('remove-extension', async (e, extensionId) => {
+  try {
+    const wvSession = session.fromPartition('persist:browser');
+    wvSession.removeExtension(extensionId);
+
+    installedExtensions = installedExtensions.filter(function(ext) {
+      return ext.id !== extensionId;
+    });
+
+    const extFile = path.join(app.getPath('userData'), 'extensions.json');
+    fs.writeFileSync(extFile, JSON.stringify(installedExtensions, null, 2));
+
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+// Load saved extensions on startup
+async function loadSavedExtensions() {
+  try {
+    const extFile = path.join(app.getPath('userData'), 'extensions.json');
+    if (!fs.existsSync(extFile)) return;
+
+    const saved = JSON.parse(fs.readFileSync(extFile, 'utf8'));
+    const wvSession = session.fromPartition('persist:browser');
+
+    for (const ext of saved) {
+      try {
+        if (fs.existsSync(ext.path)) {
+          const loaded = await wvSession.loadExtension(ext.path, {
+            allowFileAccess: true
+          });
+          installedExtensions.push({
+            id: loaded.id,
+            name: loaded.name || ext.name,
+            version: loaded.version || ext.version,
+            description: ext.description,
+            path: ext.path,
+            permissions: ext.permissions || [],
+            manifestVersion: ext.manifestVersion,
+            enabled: true,
+            loadedAt: Date.now()
+          });
+          console.log('[Extensions] Restored:', ext.name);
+        }
+      } catch (err) {
+        console.warn('[Extensions] Failed to load:', ext.name, err.message);
+      }
+    }
+  } catch (err) {
+    console.warn('[Extensions] Load saved error:', err.message);
+  }
+}
+
+// Open folder dialog for extension selection
+ipcMain.handle('select-extension-folder', async () => {
+  const result = await dialog.showOpenDialog(mainWindow, {
+    title: 'Select Extension Folder',
+    properties: ['openDirectory'],
+    message: 'Chrome extension ka folder select karo (jisme manifest.json ho)'
+  });
+
+  if (result.canceled || !result.filePaths.length) {
+    return { success: false, canceled: true };
+  }
+
+  return { success: true, path: result.filePaths[0] };
+});
 // ═══════════════════════════════════════════════════════════════
 //   APP LIFECYCLE
 // ═══════════════════════════════════════════════════════════════
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   app.setName('Universal Browser');
+
+  await loadSavedExtensions();
 
   applyAdBlockToSession(session.defaultSession);
   session.defaultSession.setUserAgent(
