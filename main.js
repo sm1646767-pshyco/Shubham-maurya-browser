@@ -6,9 +6,19 @@
 const { app, BrowserWindow, ipcMain, session, Menu, shell, webContents } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 
 app.commandLine.appendSwitch('log-level', '3');
 app.commandLine.appendSwitch('disable-logging');
+
+// ═══════════════════════════════════════════════════════════════
+//   PRIVACY + SECURITY FLAGS — DAY 11
+// ═══════════════════════════════════════════════════════════════
+app.commandLine.appendSwitch('enable-features', 'DnsOverHttps,UseDnsHttpsSvcbAlpn,PartitionedCookies,StoragePartitioning');
+app.commandLine.appendSwitch('dns-over-https-templates', 'https://cloudflare-dns.com/dns-query');
+app.commandLine.appendSwitch('force-fieldtrials', 'DnsOverHttps/Enabled');
+app.commandLine.appendSwitch('disable-features', 'InterestCohortAPI,TrackingProtection');
+app.commandLine.appendSwitch('block-new-web-contents');
 
 // ═══════════════════════════════════════════════════════════════
 //   ENV + OPENAI
@@ -109,6 +119,17 @@ const WHITELIST = [
 let blockedCount = 0;
 let stats = { blocked: 0, timeSaved: 0, dataSaved: 0, sitesVisited: 0, startTime: Date.now() };
 
+// ═══════════════════════════════════════════════════════════════
+//   PRIVACY STATS — DAY 11
+// ═══════════════════════════════════════════════════════════════
+let privacyStats = {
+  trackersBlocked: 0,
+  cookiesBlocked: 0,
+  httpsUpgrades: 0,
+  fingerprintBlocked: 0,
+  permissionsDenied: 0
+};
+
 function shouldBlock(url) {
   try {
     const lower = url.toLowerCase();
@@ -189,10 +210,14 @@ const AD_KILLER_JS = `
 })();
 `;
 
+// ═══════════════════════════════════════════════════════════════
+//   APPLY AD BLOCK + PRIVACY TO SESSION
+// ═══════════════════════════════════════════════════════════════
 function applyAdBlockToSession(sess) {
   if (sess.__adblockApplied) return;
   sess.__adblockApplied = true;
 
+  // ═══ AD BLOCKING ═══
   sess.webRequest.onBeforeRequest({ urls: ['<all_urls>'] }, (details, callback) => {
     if (details.resourceType === 'mainFrame') return callback({ cancel: false });
     if (shouldBlock(details.url)) {
@@ -200,14 +225,60 @@ function applyAdBlockToSession(sess) {
       stats.blocked = blockedCount;
       stats.timeSaved += 0.5;
       stats.dataSaved += 50;
+      privacyStats.trackersBlocked++;
       updateBadge();
       return callback({ cancel: true });
     }
     callback({ cancel: false });
   });
 
+  // ═══ HTTPS UPGRADE (Day 11) ═══
+  sess.webRequest.onBeforeRequest({ urls: ['http://*/*'] }, (details, callback) => {
+    if (details.resourceType === 'mainFrame') {
+      const httpsUrl = details.url.replace(/^http:\/\//i, 'https://');
+      privacyStats.httpsUpgrades++;
+      return callback({ redirectURL: httpsUrl });
+    }
+    callback({ cancel: false });
+  });
+
+  // ═══ ANTI-TRACKING HEADERS (Day 11) ═══
+  sess.webRequest.onBeforeSendHeaders({ urls: ['<all_urls>'] }, (details, callback) => {
+    const headers = details.requestHeaders;
+
+    // Remove tracking headers
+    delete headers['X-Client-Data'];
+    delete headers['X-Google-Apps-Framework'];
+
+    // Add DNT headers
+    headers['DNT'] = '1';
+    headers['Sec-GPC'] = '1';
+
+    // Remove referer for cross-site
+    if (headers['Referer']) {
+      try {
+        const refHost = new URL(headers['Referer']).hostname;
+        const reqHost = new URL(details.url).hostname;
+        if (refHost !== reqHost) delete headers['Referer'];
+      } catch (e) {
+        delete headers['Referer'];
+      }
+    }
+
+    callback({ requestHeaders: headers });
+  });
+
+  // ═══ PERMISSIONS (Day 11 — strict) ═══
   sess.setPermissionRequestHandler((wc, permission, callback) => {
-    callback(['fullscreen', 'clipboard-sanitized-write', 'media', 'audioCapture'].includes(permission));
+    const allowed = ['fullscreen', 'clipboard-sanitized-write'];
+    if (!allowed.includes(permission)) {
+      privacyStats.permissionsDenied++;
+    }
+    callback(allowed.includes(permission));
+  });
+
+  sess.setPermissionCheckHandler((wc, permission) => {
+    return ['fullscreen', 'clipboard-sanitized-write'].includes(permission);
   });
 }
 
@@ -235,6 +306,122 @@ ipcMain.handle('get-recently-closed', () => recentlyClosed);
 ipcMain.handle('clear-recently-closed', () => {
   recentlyClosed = [];
   return true;
+});
+
+// ═══════════════════════════════════════════════════════════════
+//   PERFORMANCE MONITORING — DAY 10
+// ═══════════════════════════════════════════════════════════════
+let perfStats = {
+  cpuHistory: [],
+  memHistory: [],
+  startTime: Date.now()
+};
+
+function getPerformanceStats() {
+  const cpus = os.cpus();
+  const totalMem = os.totalmem();
+  const freeMem = os.freemem();
+  const usedMem = totalMem - freeMem;
+
+  let totalIdle = 0, totalTick = 0;
+  cpus.forEach(cpu => {
+    for (const type in cpu.times) {
+      totalTick += cpu.times[type];
+    }
+    totalIdle += cpu.times.idle;
+  });
+  const cpuUsage = 100 - ~~(100 * totalIdle / totalTick);
+
+  const processMem = process.memoryUsage();
+  const uptime = Math.round((Date.now() - perfStats.startTime) / 1000);
+
+  return {
+    cpu: cpuUsage,
+    ram: {
+      used: usedMem,
+      total: totalMem,
+      percent: Math.round((usedMem / totalMem) * 100)
+    },
+    process: {
+      heapUsed: processMem.heapUsed,
+      heapTotal: processMem.heapTotal,
+      rss: processMem.rss
+    },
+    uptime: uptime,
+    platform: process.platform,
+    cpuModel: cpus[0] ? cpus[0].model : 'Unknown',
+    cpuCores: cpus.length
+  };
+}
+
+ipcMain.handle('get-performance-stats', () => {
+  const s = getPerformanceStats();
+  perfStats.cpuHistory.push(s.cpu);
+  perfStats.memHistory.push(s.ram.percent);
+  if (perfStats.cpuHistory.length > 60) perfStats.cpuHistory.shift();
+  if (perfStats.memHistory.length > 60) perfStats.memHistory.shift();
+  return s;
+});
+
+ipcMain.handle('get-performance-history', () => ({
+  cpu: perfStats.cpuHistory,
+  mem: perfStats.memHistory
+}));
+
+ipcMain.handle('cleanup-memory', () => {
+  try {
+    if (global.gc) global.gc();
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+//   PRIVACY & SECURITY HANDLERS — DAY 11
+// ═══════════════════════════════════════════════════════════════
+ipcMain.handle('get-privacy-stats', () => privacyStats);
+
+ipcMain.handle('reset-privacy-stats', () => {
+  privacyStats = {
+    trackersBlocked: 0,
+    cookiesBlocked: 0,
+    httpsUpgrades: 0,
+    fingerprintBlocked: 0,
+    permissionsDenied: 0
+  };
+  return privacyStats;
+});
+
+ipcMain.handle('clear-all-cookies', async () => {
+  try {
+    await session.defaultSession.clearStorageData({
+      storages: ['cookies', 'localstorage', 'indexdb', 'websql', 'shadercache', 'cachestorage']
+    });
+    const wvSession = session.fromPartition('persist:browser');
+    await wvSession.clearStorageData({
+      storages: ['cookies', 'localstorage', 'indexdb', 'websql', 'shadercache', 'cachestorage']
+    });
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('clear-cache', async () => {
+  try {
+    await session.defaultSession.clearCache();
+    const wvSession = session.fromPartition('persist:browser');
+    await wvSession.clearCache();
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('set-privacy-setting', (e, key, value) => {
+  console.log('[Privacy] Setting:', key, '=', value);
+  return { success: true };
 });
 
 // ═══════════════════════════════════════════════════════════════
@@ -413,7 +600,7 @@ ipcMain.handle('extract-article', async (e) => {
 });
 
 // ═══════════════════════════════════════════════════════════════
-//   AI HANDLERS — DAY 1-4 COMPLETE
+//   AI HANDLERS — DAY 1-4
 // ═══════════════════════════════════════════════════════════════
 
 ipcMain.handle('ai-chat', async (e, messages) => {
@@ -566,6 +753,9 @@ ipcMain.handle('ai-get-selection', async (e) => {
   }
 });
 
+// ═══════════════════════════════════════════════════════════════
+//   VOICE HANDLERS — DAY 4
+// ═══════════════════════════════════════════════════════════════
 ipcMain.handle('voice-save-settings', async (e, settings) => {
   try {
     const settingsPath = path.join(app.getPath('userData'), 'voice-settings.json');
@@ -575,80 +765,7 @@ ipcMain.handle('voice-save-settings', async (e, settings) => {
     return { success: false, error: err.message };
   }
 });
-// ═══════════════════════════════════════════════════════════════
-//   PERFORMANCE MONITORING — DAY 10
-// ═══════════════════════════════════════════════════════════════
-const os = require('os');
-let perfStats = {
-  cpuHistory: [],
-  memHistory: [],
-  startTime: Date.now()
-};
 
-function getPerformanceStats() {
-  const cpus = os.cpus();
-  const totalMem = os.totalmem();
-  const freeMem = os.freemem();
-  const usedMem = totalMem - freeMem;
-
-  // CPU usage (average across cores)
-  let totalIdle = 0, totalTick = 0;
-  cpus.forEach(cpu => {
-    for (const type in cpu.times) {
-      totalTick += cpu.times[type];
-    }
-    totalIdle += cpu.times.idle;
-  });
-  const cpuUsage = 100 - ~~(100 * totalIdle / totalTick);
-
-  // Process memory
-  const processMem = process.memoryUsage();
-
-  // Uptime
-  const uptime = Math.round((Date.now() - perfStats.startTime) / 1000);
-
-  return {
-    cpu: cpuUsage,
-    ram: {
-      used: usedMem,
-      total: totalMem,
-      percent: Math.round((usedMem / totalMem) * 100)
-    },
-    process: {
-      heapUsed: processMem.heapUsed,
-      heapTotal: processMem.heapTotal,
-      rss: processMem.rss
-    },
-    uptime: uptime,
-    platform: process.platform,
-    cpuModel: cpus[0] ? cpus[0].model : 'Unknown',
-    cpuCores: cpus.length
-  };
-}
-
-ipcMain.handle('get-performance-stats', () => {
-  const stats = getPerformanceStats();
-  perfStats.cpuHistory.push(stats.cpu);
-  perfStats.memHistory.push(stats.ram.percent);
-  if (perfStats.cpuHistory.length > 60) perfStats.cpuHistory.shift();
-  if (perfStats.memHistory.length > 60) perfStats.memHistory.shift();
-  return stats;
-});
-
-ipcMain.handle('get-performance-history', () => ({
-  cpu: perfStats.cpuHistory,
-  mem: perfStats.memHistory
-}));
-
-// Memory cleanup
-ipcMain.handle('cleanup-memory', () => {
-  try {
-    if (global.gc) global.gc();
-    return { success: true };
-  } catch (err) {
-    return { success: false, error: err.message };
-  }
-});
 ipcMain.handle('voice-load-settings', async () => {
   try {
     const settingsPath = path.join(app.getPath('userData'), 'voice-settings.json');
@@ -689,7 +806,7 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-// ═══ APPLICATION MENU (for clipboard shortcuts on Mac) ═══
+// ═══ APPLICATION MENU ═══
 const menu = Menu.buildFromTemplate([
   {
     label: 'Universal Browser',

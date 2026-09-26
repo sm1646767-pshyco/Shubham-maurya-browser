@@ -51,4 +51,10 @@ contextBridge.exposeInMainWorld('browserAPI', {
   getPerformanceStats: () => ipcRenderer.invoke('get-performance-stats'),
   getPerformanceHistory: () => ipcRenderer.invoke('get-performance-history'),
   cleanupMemory: () => ipcRenderer.invoke('cleanup-memory'),
+    // ═══ PRIVACY (Day 11) ═══
+  getPrivacyStats: () => ipcRenderer.invoke('get-privacy-stats'),
+  resetPrivacyStats: () => ipcRenderer.invoke('reset-privacy-stats'),
+  clearAllCookies: () => ipcRenderer.invoke('clear-all-cookies'),
+  clearCache: () => ipcRenderer.invoke('clear-cache'),
+  setPrivacySetting: (key, value) => ipcRenderer.invoke('set-privacy-setting', key, value),
 });
