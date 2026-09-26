@@ -3635,4 +3635,243 @@ webview.active {
   pointer-events: none;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
+/* ════════ PERFORMANCE MODAL ════════ */
+.perf-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 25000;
+  padding: 20px;
+}
+
+.perf-modal.show {
+  display: flex;
+  animation: fadeIn 0.2s ease;
+}
+
+.perf-box {
+  width: 100%;
+  max-width: 560px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.perf-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.perf-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--fg-1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.perf-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+}
+
+.perf-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.perf-card {
+  background: var(--bg-3);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.perf-card-icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.perf-card-value {
+  font-size: 26px;
+  font-weight: 800;
+  background: linear-gradient(90deg, var(--accent), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.perf-card-label {
+  font-size: 11px;
+  color: var(--fg-3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.perf-bar {
+  height: 6px;
+  background: var(--bg-1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.perf-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--purple));
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.perf-bar-fill.warning {
+  background: linear-gradient(90deg, var(--warning), var(--danger));
+}
+
+.perf-section {
+  margin-bottom: 20px;
+}
+
+.perf-section h3 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--fg-3);
+  margin-bottom: 10px;
+}
+
+.perf-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--bg-3);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.perf-info-row span:first-child {
+  color: var(--fg-2);
+}
+
+.perf-info-row span:last-child {
+  color: var(--fg-1);
+  font-weight: 600;
+}
+
+.perf-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.perf-btn {
+  padding: 12px 16px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--fg-1);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.perf-btn:hover {
+  background: var(--bg-4);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.perf-btn.primary {
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  color: #11111b;
+  border: none;
+}
+
+/* Chart */
+.perf-chart {
+  height: 80px;
+  background: var(--bg-3);
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.perf-chart-bar {
+  flex: 1;
+  background: linear-gradient(180deg, var(--accent), var(--purple));
+  border-radius: 2px 2px 0 0;
+  min-height: 2px;
+  transition: height 0.3s ease;
+  opacity: 0.7;
+}
+
+/* Sleeping tab indicator */
+.tab.sleeping {
+  opacity: 0.5;
+}
+
+.tab.sleeping::before {
+  background: var(--warning) !important;
+}
+
+.tab.sleeping .tab-favicon::after {
+  content: '💤';
+  position: absolute;
+  font-size: 8px;
+  top: -2px;
+  right: -2px;
+}
+
+/* Focus Mode */
+body.focus-mode .sidebar {
+  display: none;
+}
+
+body.focus-mode .bookmarks-bar {
+  display: none;
+}
+
+body.focus-mode .toolbar {
+  opacity: 0.3;
+  transition: opacity 0.3s;
+}
+
+body.focus-mode .toolbar:hover {
+  opacity: 1;
+}
 }

@@ -47,4 +47,8 @@ contextBridge.exposeInMainWorld('browserAPI', {
   // ═══════════════════════════════════════════════
   getRecentlyClosed: () => ipcRenderer.invoke('get-recently-closed'),
   clearRecentlyClosed: () => ipcRenderer.invoke('clear-recently-closed'),
+    // ═══ PERFORMANCE (Day 10) ═══
+  getPerformanceStats: () => ipcRenderer.invoke('get-performance-stats'),
+  getPerformanceHistory: () => ipcRenderer.invoke('get-performance-history'),
+  cleanupMemory: () => ipcRenderer.invoke('cleanup-memory'),
 });

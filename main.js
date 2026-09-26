@@ -575,7 +575,80 @@ ipcMain.handle('voice-save-settings', async (e, settings) => {
     return { success: false, error: err.message };
   }
 });
+// ═══════════════════════════════════════════════════════════════
+//   PERFORMANCE MONITORING — DAY 10
+// ═══════════════════════════════════════════════════════════════
+const os = require('os');
+let perfStats = {
+  cpuHistory: [],
+  memHistory: [],
+  startTime: Date.now()
+};
 
+function getPerformanceStats() {
+  const cpus = os.cpus();
+  const totalMem = os.totalmem();
+  const freeMem = os.freemem();
+  const usedMem = totalMem - freeMem;
+
+  // CPU usage (average across cores)
+  let totalIdle = 0, totalTick = 0;
+  cpus.forEach(cpu => {
+    for (const type in cpu.times) {
+      totalTick += cpu.times[type];
+    }
+    totalIdle += cpu.times.idle;
+  });
+  const cpuUsage = 100 - ~~(100 * totalIdle / totalTick);
+
+  // Process memory
+  const processMem = process.memoryUsage();
+
+  // Uptime
+  const uptime = Math.round((Date.now() - perfStats.startTime) / 1000);
+
+  return {
+    cpu: cpuUsage,
+    ram: {
+      used: usedMem,
+      total: totalMem,
+      percent: Math.round((usedMem / totalMem) * 100)
+    },
+    process: {
+      heapUsed: processMem.heapUsed,
+      heapTotal: processMem.heapTotal,
+      rss: processMem.rss
+    },
+    uptime: uptime,
+    platform: process.platform,
+    cpuModel: cpus[0] ? cpus[0].model : 'Unknown',
+    cpuCores: cpus.length
+  };
+}
+
+ipcMain.handle('get-performance-stats', () => {
+  const stats = getPerformanceStats();
+  perfStats.cpuHistory.push(stats.cpu);
+  perfStats.memHistory.push(stats.ram.percent);
+  if (perfStats.cpuHistory.length > 60) perfStats.cpuHistory.shift();
+  if (perfStats.memHistory.length > 60) perfStats.memHistory.shift();
+  return stats;
+});
+
+ipcMain.handle('get-performance-history', () => ({
+  cpu: perfStats.cpuHistory,
+  mem: perfStats.memHistory
+}));
+
+// Memory cleanup
+ipcMain.handle('cleanup-memory', () => {
+  try {
+    if (global.gc) global.gc();
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
 ipcMain.handle('voice-load-settings', async () => {
   try {
     const settingsPath = path.join(app.getPath('userData'), 'voice-settings.json');
