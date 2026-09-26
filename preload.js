@@ -1,7 +1,9 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('browserAPI', {
-  // Ad blocker
+  // ═══════════════════════════════════════════════
+  //   AD BLOCKER
+  // ═══════════════════════════════════════════════
   getBlockedCount: () => ipcRenderer.invoke('get-blocked-count'),
   resetBlockedCount: () => ipcRenderer.invoke('reset-blocked-count'),
   getStats: () => ipcRenderer.invoke('get-stats'),
@@ -10,15 +12,21 @@ contextBridge.exposeInMainWorld('browserAPI', {
   onOpenNewTab: (cb) => ipcRenderer.on('open-new-tab', (e, url) => cb(url)),
   notifyWebviewReady: (id) => ipcRenderer.send('webview-ready', id),
 
-  // Window
+  // ═══════════════════════════════════════════════
+  //   WINDOW CONTROLS
+  // ═══════════════════════════════════════════════
   toggleFullscreen: () => ipcRenderer.invoke('window-toggle-fullscreen'),
   isFullscreen: () => ipcRenderer.invoke('window-is-fullscreen'),
 
-  // Screenshot + Reading
+  // ═══════════════════════════════════════════════
+  //   SCREENSHOT + READING MODE
+  // ═══════════════════════════════════════════════
   saveScreenshot: (dataURL) => ipcRenderer.invoke('save-screenshot', dataURL),
   extractArticle: () => ipcRenderer.invoke('extract-article'),
 
-  // ═══ AI FEATURES ═══
+  // ═══════════════════════════════════════════════
+  //   AI FEATURES (Day 1-4)
+  // ═══════════════════════════════════════════════
   aiChat: (messages) => ipcRenderer.invoke('ai-chat', messages),
   aiSummarize: (content) => ipcRenderer.invoke('ai-summarize', content),
   aiGetPageContent: () => ipcRenderer.invoke('ai-page-content'),
@@ -28,7 +36,15 @@ contextBridge.exposeInMainWorld('browserAPI', {
   aiDetectLanguage: () => ipcRenderer.invoke('ai-detect-language'),
   aiGetSelection: () => ipcRenderer.invoke('ai-get-selection'),
 
-  // ═══ VOICE ═══
+  // ═══════════════════════════════════════════════
+  //   VOICE (Day 4)
+  // ═══════════════════════════════════════════════
   voiceSaveSettings: (settings) => ipcRenderer.invoke('voice-save-settings', settings),
   voiceLoadSettings: () => ipcRenderer.invoke('voice-load-settings'),
+
+  // ═══════════════════════════════════════════════
+  //   RECENTLY CLOSED TABS (Day 6) — NEW
+  // ═══════════════════════════════════════════════
+  getRecentlyClosed: () => ipcRenderer.invoke('get-recently-closed'),
+  clearRecentlyClosed: () => ipcRenderer.invoke('clear-recently-closed'),
 });

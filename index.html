@@ -8,6 +8,7 @@
 <body>
   <div class="app">
 
+    <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-top">
         <div class="brand">
@@ -17,6 +18,16 @@
       </div>
 
       <button class="new-tab-side" id="newTabBtn">＋ New Tab</button>
+
+      <!-- Workspace Selector -->
+      <div class="workspace-selector">
+        <button class="workspace-current" id="workspaceCurrent">
+          <span class="workspace-icon">📁</span>
+          <span class="workspace-name" id="workspaceCurrentName">Default</span>
+          <span class="workspace-arrow">▼</span>
+        </button>
+        <div class="workspace-dropdown" id="workspaceDropdown"></div>
+      </div>
 
       <div class="sidebar-section">
         <input type="text" class="tab-search" id="tabSearch" placeholder="🔍 Search tabs..." />
@@ -31,10 +42,12 @@
         <button class="side-btn" id="downloadsBtn"><span>⬇️</span> Downloads</button>
         <button class="side-btn" id="passwordsBtn"><span>🔐</span> Passwords</button>
         <button class="side-btn" id="statsBtn"><span>📊</span> Statistics</button>
+        <button class="side-btn" id="notesBtn"><span>📝</span> Notes</button>
         <button class="side-btn" id="settingsBtn"><span>⚙️</span> Settings</button>
       </div>
     </aside>
 
+    <!-- MAIN -->
     <main class="main">
       <div class="toolbar">
         <button class="icon-btn" id="backBtn" title="Back">◀</button>
@@ -51,6 +64,7 @@
 
         <div class="shield" id="shield">🛡️ <span id="blockedCount">0</span></div>
 
+        <button class="icon-btn" id="tabSearchBtn" title="Tab Search (Ctrl+Shift+A)">🔍</button>
         <button class="icon-btn" id="incognitoBtn" title="Incognito">🕶️</button>
         <button class="icon-btn" id="readingBtn" title="Reading Mode">📖</button>
         <button class="icon-btn" id="screenshotBtn" title="Screenshot">📸</button>
@@ -59,6 +73,7 @@
 
       <div class="content" id="content"></div>
 
+      <!-- START PAGE -->
       <div class="start-page" id="startPage">
         <div class="logo-badge"><span class="logo-text">UB</span></div>
         <h1>Universal</h1>
@@ -86,6 +101,7 @@
       </div>
     </main>
 
+    <!-- SIDE PANEL -->
     <aside class="panel" id="panel">
       <div class="panel-header">
         <h2 id="panelTitle">Bookmarks</h2>
@@ -94,6 +110,7 @@
       <div class="panel-body" id="panelBody"></div>
     </aside>
 
+    <!-- AI PANEL -->
     <aside class="ai-panel" id="aiPanel">
       <div class="ai-panel-header">
         <div class="ai-panel-title">
@@ -159,9 +176,44 @@
 
   </div>
 
+  <!-- TAB SEARCH MODAL -->
+  <div class="tab-search-modal" id="tabSearchModal">
+    <div class="tab-search-box">
+      <div class="tab-search-input-wrap">
+        <span class="tab-search-icon">🔍</span>
+        <input type="text" id="tabSearchInput" placeholder="Search open tabs..." autocomplete="off" />
+        <span class="tab-search-hint">ESC</span>
+      </div>
+      <div class="tab-search-results" id="tabSearchResults"></div>
+      <div class="tab-search-footer">
+        <button class="tab-search-tab" id="tabSearchRecentBtn">🕐 Recently Closed</button>
+        <button class="tab-search-tab" id="tabSearchGroupsBtn">🎨 Tab Groups</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB GROUPS MODAL -->
+  <div class="tab-groups-modal" id="tabGroupsModal">
+    <div class="tab-groups-box">
+      <div class="tab-groups-header">
+        <h2>🎨 Tab Groups</h2>
+        <button class="icon-btn" id="tabGroupsClose">✕</button>
+      </div>
+      <div class="tab-groups-body" id="tabGroupsBody"></div>
+      <div class="tab-groups-footer">
+        <button class="btn-secondary" id="tabGroupsCancel">Cancel</button>
+        <button class="btn-primary" id="tabGroupsCreate">+ Create Group</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOASTS -->
   <div class="toast-container" id="toastContainer"></div>
 
   <script src="renderer.js"></script>
   <script src="ai.js"></script>
+  <script src="workspace.js"></script>
+  <script src="tabs.js"></script>
+  <script src="notes.js"></script>
 </body>
 </html>

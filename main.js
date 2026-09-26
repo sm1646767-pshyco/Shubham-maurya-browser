@@ -1,5 +1,6 @@
 // ═══════════════════════════════════════════════════════════════
 //   UNIVERSAL BROWSER v6.0.0 — main.js
+//   Author: Shubham Maurya
 // ═══════════════════════════════════════════════════════════════
 
 const { app, BrowserWindow, ipcMain, session, Menu, shell, webContents } = require('electron');
@@ -220,6 +221,23 @@ function injectAdKiller(wc) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+//   RECENTLY CLOSED TABS — DAY 6
+// ═══════════════════════════════════════════════════════════════
+let recentlyClosed = [];
+
+function addToRecentlyClosed(url, title) {
+  if (!url || url === 'about:blank') return;
+  recentlyClosed.unshift({ url, title: title || url, time: Date.now() });
+  if (recentlyClosed.length > 20) recentlyClosed.pop();
+}
+
+ipcMain.handle('get-recently-closed', () => recentlyClosed);
+ipcMain.handle('clear-recently-closed', () => {
+  recentlyClosed = [];
+  return true;
+});
+
+// ═══════════════════════════════════════════════════════════════
 //   MAIN WINDOW
 // ═══════════════════════════════════════════════════════════════
 let mainWindow;
@@ -246,101 +264,61 @@ function createWindow() {
   });
 
   mainWindow.loadFile('index.html');
-  // ═══════════════════════════════════════════════════════════════
-//   CLIPBOARD SHORTCUTS (Copy/Paste/Cut/Select All)
-// ═══════════════════════════════════════════════════════════════
-mainWindow.webContents.on('before-input-event', (event, input) => {
-  if (input.type !== 'keyDown') return;
-  
-  const isMac = process.platform === 'darwin';
-  const cmd = isMac ? input.meta : input.control;
-  
-  // Cmd/Ctrl + C — Copy
-  if (cmd && input.key.toLowerCase() === 'c') {
-    mainWindow.webContents.copy();
-    event.preventDefault();
-  }
-  
-  // Cmd/Ctrl + V — Paste
-  if (cmd && input.key.toLowerCase() === 'v') {
-    mainWindow.webContents.paste();
-    event.preventDefault();
-  }
-  
-  // Cmd/Ctrl + X — Cut
-  if (cmd && input.key.toLowerCase() === 'x') {
-    mainWindow.webContents.cut();
-    event.preventDefault();
-  }
-  
-  // Cmd/Ctrl + A — Select All
-  if (cmd && input.key.toLowerCase() === 'a') {
-    mainWindow.webContents.selectAll();
-    event.preventDefault();
-  }
-  
-  // Cmd/Ctrl + Z — Undo
-  if (cmd && input.key.toLowerCase() === 'z') {
-    mainWindow.webContents.undo();
-    event.preventDefault();
-  }
-  
-  // Cmd/Ctrl + Shift + Z — Redo
-  if (cmd && input.shift && input.key.toLowerCase() === 'z') {
-    mainWindow.webContents.redo();
-    event.preventDefault();
-  }
-});
-  // ═══ Enable DevTools ═══
-mainWindow.webContents.openDevTools({ mode: 'detach' });
 
-// Keyboard shortcut for DevTools
-mainWindow.webContents.on('before-input-event', (event, input) => {
-  // F12 — Toggle DevTools
-  if (input.key === 'F12') {
-    mainWindow.webContents.toggleDevTools();
-    event.preventDefault();
-  }
-  // Cmd+Option+I — DevTools
-  if (input.meta && input.alt && input.key === 'i') {
-    mainWindow.webContents.toggleDevTools();
-    event.preventDefault();
-  }
-});
+  // ═══ CLIPBOARD SHORTCUTS ═══
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.type !== 'keyDown') return;
+    const isMac = process.platform === 'darwin';
+    const cmd = isMac ? input.meta : input.control;
+
+    if (cmd && input.key.toLowerCase() === 'c') {
+      mainWindow.webContents.copy();
+      event.preventDefault();
+    }
+    if (cmd && input.key.toLowerCase() === 'v') {
+      mainWindow.webContents.paste();
+      event.preventDefault();
+    }
+    if (cmd && input.key.toLowerCase() === 'x') {
+      mainWindow.webContents.cut();
+      event.preventDefault();
+    }
+    if (cmd && input.key.toLowerCase() === 'a') {
+      mainWindow.webContents.selectAll();
+      event.preventDefault();
+    }
+    if (cmd && input.key.toLowerCase() === 'z' && !input.shift) {
+      mainWindow.webContents.undo();
+      event.preventDefault();
+    }
+    if (cmd && input.shift && input.key.toLowerCase() === 'z') {
+      mainWindow.webContents.redo();
+      event.preventDefault();
+    }
+    if (input.key === 'F12') {
+      mainWindow.webContents.toggleDevTools();
+      event.preventDefault();
+    }
+    if (input.meta && input.alt && input.key.toLowerCase() === 'i') {
+      mainWindow.webContents.toggleDevTools();
+      event.preventDefault();
+    }
+  });
 
   mainWindow.webContents.on('did-attach-webview', (event, wc) => {
-        // ═══ Webview Clipboard Shortcuts ═══
+    // ═══ WEBVIEW CLIPBOARD SHORTCUTS ═══
     wc.on('before-input-event', (event, input) => {
       if (input.type !== 'keyDown') return;
-      
       const isMac = process.platform === 'darwin';
       const cmd = isMac ? input.meta : input.control;
       const key = input.key.toLowerCase();
-      
-      // Copy
-      if (cmd && key === 'c') {
-        wc.copy();
-        event.preventDefault();
-      }
-      
-      // Paste
-      if (cmd && key === 'v') {
-        wc.paste();
-        event.preventDefault();
-      }
-      
-      // Cut
-      if (cmd && key === 'x') {
-        wc.cut();
-        event.preventDefault();
-      }
-      
-      // Select All
-      if (cmd && key === 'a') {
-        wc.selectAll();
-        event.preventDefault();
-      }
+
+      if (cmd && key === 'c') { wc.copy(); event.preventDefault(); }
+      if (cmd && key === 'v') { wc.paste(); event.preventDefault(); }
+      if (cmd && key === 'x') { wc.cut(); event.preventDefault(); }
+      if (cmd && key === 'a') { wc.selectAll(); event.preventDefault(); }
     });
+
     applyAdBlockToSession(wc.session);
     wc.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36');
     wc.on('did-finish-load', () => injectAdKiller(wc));
@@ -438,7 +416,6 @@ ipcMain.handle('extract-article', async (e) => {
 //   AI HANDLERS — DAY 1-4 COMPLETE
 // ═══════════════════════════════════════════════════════════════
 
-// Day 1: Chat
 ipcMain.handle('ai-chat', async (e, messages) => {
   if (!openai) return { success: false, error: 'OpenAI API key not set' };
   try {
@@ -454,7 +431,6 @@ ipcMain.handle('ai-chat', async (e, messages) => {
   }
 });
 
-// Day 2: Summarize
 ipcMain.handle('ai-summarize', async (e, content) => {
   if (!openai) return { success: false, error: 'OpenAI API key not set' };
   try {
@@ -472,7 +448,6 @@ ipcMain.handle('ai-summarize', async (e, content) => {
   }
 });
 
-// Day 2: Get page content
 ipcMain.handle('ai-page-content', async (e) => {
   const wc = e.sender;
   try {
@@ -486,7 +461,6 @@ ipcMain.handle('ai-page-content', async (e) => {
   }
 });
 
-// Day 3: Ask This Page
 ipcMain.handle('ai-ask-page', async (e, question) => {
   if (!openai) return { success: false, error: 'OpenAI API key not set' };
   const wc = e.sender;
@@ -513,7 +487,6 @@ ipcMain.handle('ai-ask-page', async (e, question) => {
   }
 });
 
-// Day 3: Translate text
 ipcMain.handle('ai-translate', async (e, text, targetLang) => {
   if (!openai) return { success: false, error: 'OpenAI API key not set' };
   try {
@@ -532,7 +505,6 @@ ipcMain.handle('ai-translate', async (e, text, targetLang) => {
   }
 });
 
-// Day 3: Translate Page
 ipcMain.handle('ai-translate-page', async (e, targetLang) => {
   if (!openai) return { success: false, error: 'OpenAI API key not set' };
   const wc = e.sender;
@@ -557,7 +529,6 @@ ipcMain.handle('ai-translate-page', async (e, targetLang) => {
   }
 });
 
-// Day 3: Detect language
 ipcMain.handle('ai-detect-language', async (e) => {
   if (!openai) return { success: false, error: 'OpenAI API key not set' };
   const wc = e.sender;
@@ -582,7 +553,6 @@ ipcMain.handle('ai-detect-language', async (e) => {
   }
 });
 
-// Day 3: Get selection
 ipcMain.handle('ai-get-selection', async (e) => {
   const wc = e.sender;
   try {
@@ -596,7 +566,6 @@ ipcMain.handle('ai-get-selection', async (e) => {
   }
 });
 
-// Day 4: Voice settings
 ipcMain.handle('voice-save-settings', async (e, settings) => {
   try {
     const settingsPath = path.join(app.getPath('userData'), 'voice-settings.json');
