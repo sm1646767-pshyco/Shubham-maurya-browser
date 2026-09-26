@@ -3,132 +3,576 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <meta name="description" content="Universal Browser — Ad-free, fast, private browser by Shubham Maurya" />
+  <meta name="description" content="Universal Browser v6.0 — Ad-free, AI-native, private browser by Shubham Maurya. Available for Mac, Windows, Linux." />
+  <meta name="keywords" content="universal browser, ad-free browser, AI browser, privacy browser, shubham maurya" />
+  <meta name="author" content="Shubham Maurya" />
   <meta name="theme-color" content="#89b4fa" />
-  <title>Universal Browser — Ad-free, Fast, Private</title>
+
+  <meta property="og:title" content="Universal Browser v6.0 — AI-Native, Ad-free, Private" />
+  <meta property="og:description" content="Ad-free, AI-native, private browser by Shubham Maurya." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://sm1646767-pshyco.github.io/Shubham-maurya-browser/" />
+  <meta property="og:image" content="icon-512.png" />
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Universal Browser">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" href="icon-192.png">
+
+  <title>Universal Browser v6.0 — AI-Native, Ad-free, Private</title>
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #1e1e2e 0%, #181825 100%);
-      color: #cdd6f4; min-height: 100vh;
-      display: flex; flex-direction: column; align-items: center;
-      padding: 40px 20px;
+      color: #cdd6f4;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px;
+      line-height: 1.6;
     }
-    .hero { max-width: 900px; text-align: center; padding: 40px 20px; }
+
+    /* HERO */
+    .hero { max-width: 900px; width: 100%; text-align: center; padding: 40px 16px 20px; }
     .logo {
-      width: 100px; height: 100px;
+      width: 110px; height: 110px;
       background: linear-gradient(135deg, #89b4fa, #cba6f7);
-      border-radius: 24px; display: flex; align-items: center;
-      justify-content: center; font-size: 42px; font-weight: 900;
-      color: #11111b; margin: 0 auto 24px;
-      box-shadow: 0 20px 60px rgba(137,180,250,0.4);
+      border-radius: 28px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 46px; font-weight: 900; color: #11111b;
+      margin: 0 auto 24px;
+      box-shadow: 0 20px 60px rgba(137, 180, 250, 0.4);
       animation: float 4s ease-in-out infinite;
+      letter-spacing: -2px;
     }
     @keyframes float {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
+      50% { transform: translateY(-10px); }
+    }
+    .version-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      background: rgba(137, 180, 250, 0.15);
+      color: #89b4fa;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(137, 180, 250, 0.3);
     }
     h1 {
-      font-size: 48px; font-weight: 800; margin-bottom: 12px;
-      background: linear-gradient(90deg, #89b4fa, #cba6f7, #f38ba8);
-      background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      font-size: 52px;
+      font-weight: 800;
+      margin-bottom: 14px;
+      background: linear-gradient(90deg, #89b4fa 0%, #cba6f7 50%, #f38ba8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.1;
+      letter-spacing: -1px;
     }
-    .subtitle { font-size: 18px; color: #a6adc8; margin-bottom: 8px; }
+    .subtitle {
+      font-size: 19px;
+      color: #a6adc8;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
     .author { font-size: 14px; color: #6c7086; margin-bottom: 32px; }
     .author b {
       background: linear-gradient(90deg, #89b4fa, #cba6f7);
-      background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
     }
-    .buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 60px; }
+
+    /* FEATURE PILLS */
+    .feature-pills {
+      display: flex; gap: 10px; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 32px;
+    }
+    .pill {
+      padding: 6px 14px;
+      background: #313244;
+      border: 1px solid #45475a;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #cdd6f4;
+      font-weight: 600;
+    }
+
+    /* CTA BUTTONS */
+    .cta-buttons {
+      display: flex; gap: 12px; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 50px;
+    }
     .btn {
-      padding: 14px 28px; border-radius: 12px;
-      font-size: 15px; font-weight: 600;
-      text-decoration: none; display: inline-flex;
-      align-items: center; gap: 8px;
+      padding: 15px 30px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      min-height: 50px;
+      font-family: inherit;
     }
     .btn-primary {
       background: linear-gradient(135deg, #89b4fa, #cba6f7);
-      color: #11111b; box-shadow: 0 8px 24px rgba(137,180,250,0.4);
+      color: #11111b;
+      box-shadow: 0 8px 24px rgba(137, 180, 250, 0.4);
     }
-    .btn-secondary { background: #313244; color: #cdd6f4; border: 1px solid #45475a; }
+    .btn-primary:hover, .btn-primary:active {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(137, 180, 250, 0.6);
+    }
+    .btn-secondary {
+      background: #313244; color: #cdd6f4;
+      border: 1px solid #45475a;
+    }
+    .btn-secondary:hover, .btn-secondary:active { background: #45475a; }
+
+    /* DOWNLOAD */
+    .download-section { max-width: 1000px; width: 100%; margin-bottom: 60px; }
+    .section-title {
+      font-size: 26px; font-weight: 700;
+      text-align: center; margin-bottom: 8px; color: #cdd6f4;
+    }
+    .section-subtitle {
+      text-align: center; color: #a6adc8;
+      font-size: 14px; margin-bottom: 28px;
+    }
+    .download-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .download-card {
+      background: #313244;
+      border: 1px solid #45475a;
+      border-radius: 16px;
+      padding: 24px 20px;
+      text-align: center;
+      text-decoration: none;
+      color: #cdd6f4;
+      transition: all 0.2s;
+      display: block;
+    }
+    .download-card:hover, .download-card:active {
+      transform: translateY(-4px);
+      border-color: #89b4fa;
+      box-shadow: 0 12px 32px rgba(137, 180, 250, 0.2);
+    }
+    .download-card .os-icon { font-size: 40px; margin-bottom: 12px; display: block; }
+    .download-card .os-name { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .download-card .os-info { font-size: 12px; color: #a6adc8; margin-bottom: 12px; }
+    .download-card .os-size {
+      font-size: 11px; color: #6c7086;
+      padding: 4px 10px; background: #1e1e2e;
+      border-radius: 20px; display: inline-block;
+    }
+    .download-card .os-badge {
+      font-size: 10px; color: #a6e3a1;
+      padding: 2px 8px;
+      background: rgba(166, 227, 161, 0.15);
+      border-radius: 20px;
+      display: inline-block;
+      margin-top: 8px; font-weight: 600;
+    }
+
+    /* FEATURES */
+    .features-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
     .features {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px; max-width: 1000px; margin-bottom: 60px; width: 100%;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      max-width: 1100px;
+      width: 100%;
+      margin-bottom: 60px;
     }
     .feature {
-      background: #313244; padding: 24px;
-      border-radius: 16px; border: 1px solid #45475a;
+      background: #313244;
+      padding: 24px 20px;
+      border-radius: 16px;
+      text-align: left;
+      border: 1px solid #45475a;
+      transition: all 0.2s;
     }
-    .feature-icon { font-size: 32px; margin-bottom: 12px; }
-    .feature h3 { font-size: 16px; margin-bottom: 8px; }
+    .feature:hover {
+      transform: translateY(-4px);
+      border-color: #89b4fa;
+      box-shadow: 0 12px 32px rgba(137, 180, 250, 0.15);
+    }
+    .feature-icon { font-size: 32px; margin-bottom: 12px; display: block; }
+    .feature h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; color: #cdd6f4; }
     .feature p { font-size: 13px; color: #a6adc8; line-height: 1.6; }
-    .footer {
-      text-align: center; color: #6c7086; font-size: 13px;
-      padding: 40px 20px; border-top: 1px solid #313244;
-      width: 100%; max-width: 900px;
+
+    /* SHORTCUTS */
+    .shortcuts-section {
+      max-width: 900px;
+      width: 100%;
+      margin-bottom: 60px;
+      background: #313244;
+      border: 1px solid #45475a;
+      border-radius: 20px;
+      padding: 32px 24px;
     }
-    .footer a { color: #89b4fa; text-decoration: none; }
-    @media (max-width: 600px) {
-      h1 { font-size: 32px; }
-      .buttons { flex-direction: column; }
-      .btn { width: 100%; justify-content: center; }
+    .shortcuts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .shortcut-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: #1e1e2e;
+      border-radius: 8px;
+      font-size: 12px;
+      gap: 10px;
+    }
+    .shortcut-item span:first-child { color: #a6adc8; }
+    .shortcut-key {
+      padding: 3px 8px;
+      background: #313244;
+      border: 1px solid #45475a;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 11px;
+      color: #89b4fa;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* INSTALL INSTRUCTIONS */
+    .install-instructions {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto 60px;
+      padding: 24px;
+      background: rgba(249, 226, 175, 0.08);
+      border: 1px solid rgba(249, 226, 175, 0.3);
+      border-radius: 16px;
+    }
+    .install-instructions h3 {
+      font-size: 18px;
+      color: #f9e2af;
+      margin-bottom: 12px;
+    }
+    .install-instructions > p {
+      color: #a6adc8;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    .install-option {
+      background: #1e1e2e;
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #313244;
+    }
+    .install-option:last-child { margin-bottom: 0; }
+    .install-option-title {
+      font-size: 12px;
+      color: #89b4fa;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .install-option code {
+      display: block;
+      background: #181825;
+      padding: 12px;
+      border-radius: 6px;
+      color: #a6e3a1;
+      font-size: 12px;
+      overflow-x: auto;
+      font-family: monospace;
+    }
+    .install-option ol {
+      font-size: 13px;
+      color: #cdd6f4;
+      line-height: 1.8;
+      padding-left: 20px;
+    }
+
+    /* FOOTER */
+    .footer {
+      text-align: center;
+      color: #6c7086;
+      font-size: 13px;
+      padding: 40px 20px;
+      border-top: 1px solid #313244;
+      width: 100%;
+      max-width: 900px;
+    }
+    .footer a { color: #89b4fa; text-decoration: none; font-weight: 600; }
+    .footer a:hover { text-decoration: underline; }
+    .footer .social-links {
+      display: flex; gap: 16px; justify-content: center;
+      margin-bottom: 16px;
+    }
+    .footer .social-links a { font-size: 22px; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      h1 { font-size: 36px; }
+      .subtitle { font-size: 16px; }
+      .logo { width: 90px; height: 90px; font-size: 38px; }
+      .section-title { font-size: 20px; }
+      .shortcuts-section { padding: 24px 16px; }
+    }
+    @media (max-width: 480px) {
+      body { padding: 16px 12px; }
+      h1 { font-size: 30px; }
+      .subtitle { font-size: 14px; }
+      .logo { width: 80px; height: 80px; font-size: 34px; }
+      .cta-buttons { flex-direction: column; }
+      .btn { width: 100%; }
+      .feature h3 { font-size: 15px; }
+      .feature p { font-size: 12px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- HERO -->
   <div class="hero">
     <div class="logo">UB</div>
+    <div class="version-badge">✨ v6.0.0 — AI-Native</div>
     <h1>Universal Browser</h1>
-    <p class="subtitle">Ad-free · Fast · Private</p>
+    <p class="subtitle">
+      Ad-free · AI-Native · Privacy-First<br>
+      YouTube, Google, aur har website pe ads block karo
+    </p>
     <p class="author">Crafted with ❤️ by <b>Shubham Maurya</b></p>
   </div>
 
-  <div class="buttons">
+  <!-- FEATURE PILLS -->
+  <div class="feature-pills">
+    <span class="pill">🛡️ Ad Blocker</span>
+    <span class="pill">🤖 AI Assistant</span>
+    <span class="pill">🔒 Privacy</span>
+    <span class="pill">⚡ Performance</span>
+    <span class="pill">📁 Workspaces</span>
+  </div>
+
+  <!-- CTA BUTTONS -->
+  <div class="cta-buttons">
     <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/latest" class="btn btn-primary">
-      📥 Download Now
+      📥 Download v6.0.0
     </a>
     <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser" class="btn btn-secondary">
       ⭐ View on GitHub
     </a>
   </div>
 
-  <div class="features">
-    <div class="feature">
-      <div class="feature-icon">🛡️</div>
-      <h3>Ad Blocker</h3>
-      <p>300+ ad domains blocked at network level</p>
-    </div>
-    <div class="feature">
-      <div class="feature-icon">🎬</div>
-      <h3>YouTube Skip</h3>
-      <p>Video ads auto-skip, plus SponsorBlock</p>
-    </div>
-    <div class="feature">
-      <div class="feature-icon">⌨️</div>
-      <h3>Command Palette</h3>
-      <p>Ctrl+K for quick actions</p>
-    </div>
-    <div class="feature">
-      <div class="feature-icon">🔐</div>
-      <h3>Password Manager</h3>
-      <p>Save passwords locally and securely</p>
-    </div>
-    <div class="feature">
-      <div class="feature-icon">📊</div>
-      <h3>Statistics</h3>
-      <p>Track ads blocked and time saved</p>
-    </div>
-    <div class="feature">
-      <div class="feature-icon">📖</div>
-      <h3>Reading Mode</h3>
-      <p>Distraction-free article viewing</p>
+  <!-- DOWNLOAD SECTION -->
+  <div class="download-section">
+    <h2 class="section-title">📥 Download for Your Platform</h2>
+    <p class="section-subtitle">Free · Open Source · No Sign-up Required</p>
+
+    <div class="download-grid">
+      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/latest" class="download-card">
+        <span class="os-icon">🍎</span>
+        <div class="os-name">Mac</div>
+        <div class="os-info">Apple Silicon (M1/M2/M3)</div>
+        <div class="os-size">~110 MB</div>
+        <div class="os-badge">✅ Recommended</div>
+      </a>
+
+      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/latest" class="download-card">
+        <span class="os-icon">💻</span>
+        <div class="os-name">Mac</div>
+        <div class="os-info">Intel (x64)</div>
+        <div class="os-size">~115 MB</div>
+      </a>
+
+      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/latest" class="download-card">
+        <span class="os-icon">🪟</span>
+        <div class="os-name">Windows</div>
+        <div class="os-info">Windows 10 / 11 (x64)</div>
+        <div class="os-size">~95 MB</div>
+        <div class="os-badge">✅ Recommended</div>
+      </a>
+
+      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser/releases/latest" class="download-card">
+        <span class="os-icon">🐧</span>
+        <div class="os-name">Linux</div>
+        <div class="os-info">AppImage / .deb</div>
+        <div class="os-size">~100 MB</div>
+      </a>
     </div>
   </div>
 
-  <div class="footer">
-    <p>Made with ❤️ by <a href="https://github.com/sm1646767-pshyco">Shubham Maurya</a></p>
-    <p style="margin-top: 8px;">MIT License · © 2026 · v5.0.0</p>
+  <!-- INSTALL INSTRUCTIONS -->
+  <div class="install-instructions">
+    <h3>⚠️ First-Time Installation</h3>
+    <p>
+      App <strong>unsigned</strong> hai, isliye macOS/Windows pehli baar warning dega. Ye normal hai — app <strong>safe hai</strong>.
+    </p>
+
+    <div class="install-option">
+      <div class="install-option-title">🍎 macOS</div>
+      <p style="font-size:12px; color:#a6adc8; margin-bottom:8px;">Agar "Malware Blocked" ya "Unidentified Developer" popup aaye:</p>
+      <strong style="color:#89b4fa; font-size:12px;">Terminal me ek command:</strong>
+      <code>sudo xattr -cr /Applications/Universal\ Browser.app</code>
+      <p style="margin-top:12px; font-size:12px; color:#a6adc8;">
+        <strong style="color:#89b4fa;">Ya phir:</strong> System Settings → Privacy & Security → "Open Anyway"
+      </p>
+    </div>
+
+    <div class="install-option">
+      <div class="install-option-title">🪟 Windows</div>
+      <p style="font-size:12px; color:#a6adc8; margin-bottom:8px;">Agar "Windows protected your PC" aaye:</p>
+      <ol>
+        <li><strong>"More info"</strong> click karo</li>
+        <li><strong>"Run anyway"</strong> click karo</li>
+        <li>Install ho jayega</li>
+      </ol>
+    </div>
   </div>
+
+  <!-- FEATURES -->
+  <div class="features-header">
+    <h2 class="section-title">✨ Features</h2>
+    <p class="section-subtitle">Sab kuch ek browser me</p>
+  </div>
+
+  <div class="features">
+    <div class="feature">
+      <span class="feature-icon">🛡️</span>
+      <h3>Ad-Free Browsing</h3>
+      <p>250+ ad domains blocked. YouTube ad auto-skip with SponsorBlock.</p>
+    </div>
+
+    <div class="feature">
+      <span class="feature-icon">🤖</span>
+      <h3>AI Assistant</h3>
+      <p>ChatGPT-powered panel. Summarize, translate, ask questions — 19 languages.</p>
+    </div>
+
+    <div class="feature">
+      <span class="feature-icon">🔒</span>
+      <h3>Privacy-First</h3>
+      <p>Anti-fingerprinting, DNS-over-HTTPS, HTTPS upgrade, cookie blocking.</p>
+    </div>
+
+    <div class="feature">
+      <span class="feature-icon">📁</span>
+      <h3>Workspaces</h3>
+      <p>Multiple projects ke liye alag tabs groups. Auto-save with color coding.</p>
+    </div>
+
+    <div class="feature">
+      <span class="feature-icon">📑</span>
+      <h3>Advanced Tabs</h3>
+      <p>Vertical tabs, tab search, recently closed, color-coded groups.</p>
+    </div>
+
+    <div class="feature">
+      <span class="feature-icon">📝</span>
+      <h3>Notes System</h3>
+      <p>Save pages, text, tags, search. Export to JSON. Pin important notes.</p>
+    </div>
+
+    <div class="feature">
+      <span class="feature-icon">📊</span>
+      <h3>Performance</h3>
+      <p>Live dashboard with CPU, RAM. Focus mode. Auto tab sleeping.</p>
+    </div>
+
+    <div class="feature">
+      <span class="feature-icon">💾</span>
+      <h3>Backup & Restore</h3>
+      <p>Export all data. Encrypted backup. Restore from file.</p>
+    </div>
+
+    <div class="feature">
+      <span class="feature-icon">🧩</span>
+      <h3>Extensions</h3>
+      <p>Load Chrome extensions. Manifest V3 support. Full control.</p>
+    </div>
+
+    <div class="feature">
+      <span class="feature-icon">🔍</span>
+      <h3>10 Search Engines</h3>
+      <p>Google, DDG, Bing, Brave, Yandex, Baidu, Yahoo, Ecosia, Startpage, Perplexity.</p>
+    </div>
+
+    <div class="feature">
+      <span class="feature-icon">📖</span>
+      <h3>Reading Mode</h3>
+      <p>Clean article view. Distraction-free reading. Auto-extract content.</p>
+    </div>
+
+    <div class="feature">
+      <span class="feature-icon">⚡</span>
+      <h3>Command Palette</h3>
+      <p>Ctrl+K for everything — new tab, bookmark, settings, AI, search.</p>
+    </div>
+  </div>
+
+  <!-- SHORTCUTS -->
+  <div class="shortcuts-section">
+    <h2 class="section-title" style="font-size:20px;">⌨️ Top Shortcuts</h2>
+    <p class="section-subtitle">Ek baar seekho, hamesha use karo</p>
+
+    <div class="shortcuts-grid">
+      <div class="shortcut-item"><span>Command Palette</span><span class="shortcut-key">Ctrl + K</span></div>
+      <div class="shortcut-item"><span>Tab Search</span><span class="shortcut-key">Ctrl + Shift + A</span></div>
+      <div class="shortcut-item"><span>Notes Panel</span><span class="shortcut-key">Ctrl + Shift + N</span></div>
+      <div class="shortcut-item"><span>Backup & Restore</span><span class="shortcut-key">Ctrl + Shift + B</span></div>
+      <div class="shortcut-item"><span>Reading Mode</span><span class="shortcut-key">Ctrl + Shift + R</span></div>
+      <div class="shortcut-item"><span>Voice Input</span><span class="shortcut-key">Ctrl + Shift + V</span></div>
+      <div class="shortcut-item"><span>Privacy Dashboard</span><span class="shortcut-key">Ctrl + Shift + I</span></div>
+      <div class="shortcut-item"><span>Performance</span><span class="shortcut-key">Ctrl + Shift + P</span></div>
+      <div class="shortcut-item"><span>Focus Mode</span><span class="shortcut-key">Ctrl + Shift + F</span></div>
+      <div class="shortcut-item"><span>Help</span><span class="shortcut-key">F1</span></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="social-links">
+      <a href="https://github.com/sm1646767-pshyco" title="GitHub">🐙</a>
+      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser" title="Repo">⭐</a>
+    </div>
+    <p>
+      Made with ❤️ by <a href="https://github.com/sm1646767-pshyco">Shubham Maurya</a>
+    </p>
+    <p style="margin-top: 8px;">
+      <a href="https://github.com/sm1646767-pshyco/Shubham-maurya-browser">GitHub</a> ·
+      MIT License · © 2026 · v6.0.0
+    </p>
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/Shubham-maurya-browser/sw.js')
+          .then(reg => console.log('✅ SW registered'))
+          .catch(err => console.log('❌ SW failed', err));
+      });
+    }
+  </script>
+
 </body>
 </html>

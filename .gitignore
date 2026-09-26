@@ -29,3 +29,37 @@ echo "node_modules/" >> .gitignore.env
 node_modules/
 .env
 node_modules/
+# Node
+node_modules/
+package-lock.json
+
+# Build
+dist/
+build/
+out/
+*.dmg
+*.zip
+*.exe
+*.AppImage
+*.deb
+*.blockmap
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Screenshots (optional)
+# screenshots/*.png
+
+# Backup files
+*.bak
+*.bak2
+*.bak3
